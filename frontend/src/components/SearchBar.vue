@@ -1,17 +1,20 @@
 <template>
   <div>
-    <div :class="{ 'is-input': isInput, 'search-bar': !isInput }">
-      <input
-          type="text"
-          v-model="query"
-          placeholder="지역명 검색"
-          @focus="onFocus()"
-          @blur="onBlur()"
-          @input="onInput()"
-          @compositionstart="onCompositionStart"
-      />
-      <font-awesome-icon :icon="['fas', 'magnifying-glass']" class="search-icon"/>
+    <div class="search-container" :style="{ backgroundColor: backgroundColor }">
+      <div :class="{ 'is-input': isInput, 'search-bar': !isInput }">
+        <input
+            type="text"
+            v-model="query"
+            placeholder="지역명 검색"
+            @focus="onFocus()"
+            @blur="onBlur()"
+            @input="onInput()"
+            @compositionstart="onCompositionStart"
+        />
+        <font-awesome-icon :icon="['fas', 'magnifying-glass']" class="search-icon"/>
+      </div>
     </div>
+
     <!--    <table v-if="suggestions.length" border="1">-->
     <!--      <thead>-->
     <!--      <tr>-->
@@ -63,6 +66,11 @@ export default {
   //     this.suggestions = []; // 제안 목록 비우기
   //   }
   // }
+  props: {
+    backgroundColor: {
+      type: String,
+    }
+  },
   data() {
     return {
       query: "",
@@ -146,34 +154,32 @@ export default {
 </script>
 
 <style scoped>
-.search-bar {
-  //position: relative;
+.search-container {
   position: fixed;
-  top: 24px;
-  left: 99px;
+  top: 0;
+  left: 80px;
+  padding: 14px 19px;
+  width: 375px;
+  z-index: 10;
+}
+
+.search-bar {
   display: flex;
   align-items: center;
   background-color: white;
   border-radius: 25px;
   padding: 10px 15px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  width: 300px;
-  z-index: 10;
 }
 
 .is-input {
-  position: fixed;
-  top: 24px;
-  left: 99px;
   display: flex;
   align-items: center;
   background-color: white;
   padding: 10px 15px;
   //box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  width: 300px;
   border-radius: 16px 16px 0 0;
   border-bottom: 1px solid #dadce0;
-  z-index: 10;
 }
 
 input {
