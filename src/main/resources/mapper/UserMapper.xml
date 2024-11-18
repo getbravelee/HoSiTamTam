@@ -5,17 +5,17 @@
 
     <!-- 사용자명으로 사용자 조회 -->
     <select id="findByUsername" resultType="com.suleekyuri.hositamtam.user.User">
-        SELECT * FROM users WHERE userLoginId = #{username}
+        SELECT * FROM users WHERE user_login_id = #{username}
     </select>
 
     <!-- 로그인 ID로 사용자 조회 -->
     <select id="findByLoginId" resultType="com.suleekyuri.hositamtam.user.User">
-        SELECT * FROM users WHERE userLoginId = #{userLoginId}
+        SELECT * FROM users WHERE user_login_id = #{userLoginId}
     </select>
 
     <!-- 사용자 등록 -->
     <insert id="insertUser" parameterType="com.suleekyuri.hositamtam.user.User">
-        INSERT INTO users (userLoginId, userLoginPassword, userNickname, userEmail)
+        INSERT INTO users (user_login_id, user_login_password, user_nickname, user_email)
         VALUES (#{userLoginId}, #{userLoginPassword}, #{userNickname}, #{userEmail})
     </insert>
 

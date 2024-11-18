@@ -27,7 +27,7 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // AuthenticationManager를 설정하는 새로운 방법
+    // AuthenticationManager 설정
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder authenticationManagerBuilder =
@@ -53,17 +53,21 @@ public class SecurityConfig {
 //        return http.build();
 //    }
 
+    // Swagger UI와 OpenAPI 문서에 대한 접근 허용
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/swagger-ui.html", "/v3/api-docs/**").permitAll()  // Swagger UI와 API 문서에 접근 허용
-                        .anyRequest().authenticated()  // 나머지 요청은 인증 필요
+                        // Swagger UI와 API 문서에 대한 접근을 허용
+                        .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        // 나머지 모든 요청은 인증 필요
+                        .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")  // 로그인 페이지 설정
-                        .permitAll()
+                        .permitAll()           // 로그인 페이지는 누구나 접근 가능
                 );
+
         return http.build();
     }
 }
