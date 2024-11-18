@@ -1,25 +1,22 @@
-<template>
-  <SearchBar />
-</template>
-
-<script>
-import SearchBar from "@/components/SearchBar.vue";
-
-export default {
-  name: 'App',
-  components: {
-    SearchBar
-  }
-}
+<script setup>
+// import SearchBar from './components/SearchBar.vue';
+// import ChatBot from './components/ChatBot.vue'; // ChatBot 컴포넌트 import
+// import FilteringWord from "./components/FilteringWord.vue";
+import SideMenu from "@/components/SideMenu.vue";
+import { RouterView } from "vue-router";
 </script>
 
+<template>
+  <div id="app">
+    <SideMenu />
+    <RouterView />
+  </div>
+</template>
+
 <style>
+/* 스타일 추가 */
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
