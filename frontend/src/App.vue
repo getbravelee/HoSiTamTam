@@ -4,10 +4,12 @@
 // import FilteringWord from "./components/FilteringWord.vue";
 import SideMenu from "@/components/SideMenu.vue";
 import { RouterView } from "vue-router";
+import MapMain from "@/components/MapMain.vue";
 </script>
 
 <template>
   <div id="app">
+    <MapMain />
     <SideMenu />
     <RouterView />
   </div>
