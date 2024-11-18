@@ -83,7 +83,7 @@ import SearchBar from "@/components/SearchBar.vue";
 <style scoped>
 .body-container {
   position: fixed;
-  top: 65px;
+  top: 71px;
   left: 80px;
   padding: 20px 19px;
   width: 375px;
