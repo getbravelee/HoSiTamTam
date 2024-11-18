@@ -1,20 +1,26 @@
-package com.hositamtam.filtering.controller;
+package com.suleekyuri.hositamtam.filtering.controller;
 
-import com.hositamtam.filtering.dto.ApartmentDto;
-import com.hositamtam.filtering.service.ApartmentService;
-import java.util.List;
+
+import com.suleekyuri.hositamtam.filtering.dto.ApartmentDto;
+import com.suleekyuri.hositamtam.filtering.service.ApartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/apartments")
 public class ApartmentController {
 
     @Autowired
-    private ApartmentService apartmentService;
+    private final ApartmentService apartmentService;
+
+    public ApartmentController(ApartmentService apartmentService) {
+        this.apartmentService = apartmentService;
+    }
 
     @GetMapping
     public List<ApartmentDto> getFilteredApartments(
