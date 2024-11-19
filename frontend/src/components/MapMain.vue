@@ -183,7 +183,7 @@ onMounted(() => {
 
 #category {
   position: absolute;
-  top: 10px;
+  top: 14px;
   left: 50%;
   transform: translateX(-50%);
   padding: 0;
