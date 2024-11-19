@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import MainView from "@/views/MainView.vue";
 import MapView from "@/views/MapView.vue";
+import NoticeView from "@/views/NoticeView.vue";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -15,6 +16,11 @@ const router = createRouter({
             name: "map",
             component: MapView,
         },
+        {
+            path: "/notice",
+            name: "notice",
+            component: NoticeView,
+        }
     ],
 });
 
