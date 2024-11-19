@@ -54,12 +54,14 @@ import SearchBar from "@/components/SearchBar.vue";
             <button type="button" data-bs-target="#noticeCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
           </div>
           <div class="carousel-inner">
-            <div class="section-body carousel-item active">
-              <div class="notice-box">
-                <div class="notice-title title" title>개인정보처리방침 개정 안내</div>
-                <div class="notice-info info">2024.11.01</div>
+            <RouterLink :to="{ name: 'notice' }" class="no-decoration">
+              <div class="section-body carousel-item active">
+                <div class="notice-box">
+                  <div class="notice-title title" title>개인정보처리방침 개정 안내</div>
+                  <div class="notice-info info">2024.11.01</div>
+                </div>
               </div>
-            </div>
+            </RouterLink>
             <div class="section-body carousel-item">
               <div class="notice-box">
                 <div class="notice-title title" title>서비스 출시</div>
@@ -193,5 +195,10 @@ import SearchBar from "@/components/SearchBar.vue";
 
 .carousel-indicators .active {
   background-color: #293A67;
+}
+
+.no-decoration {
+  text-decoration: none;
+  //color: black;
 }
 </style>
