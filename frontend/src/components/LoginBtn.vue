@@ -31,8 +31,8 @@ const toggleModal = () => {
 <style scoped>
 .login-button {
   position: fixed;
-  top: 30px;
-  right: 25px;
+  top: 14px;
+  right: 20px;
   background-color: #3b5998; /* Dark blue color */
   color: white;
   padding: 8px 15px;
@@ -40,5 +40,6 @@ const toggleModal = () => {
   border-radius: 8px;
   font-size: 18px;
   cursor: pointer;
+  z-index: 1000;
 }
 </style>

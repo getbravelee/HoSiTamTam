@@ -61,6 +61,10 @@ function handleSignUp() {
               <input v-model="username" id="user" type="text" class="input" />
             </div>
             <div class="group">
+              <label for="id" class="label">Id</label>
+              <input v-model="username" id="id" type="text" class="input" />
+            </div>
+            <div class="group">
               <label for="pass" class="label">Password</label>
               <input v-model="password" id="pass" type="password" class="input" />
             </div>
@@ -74,10 +78,6 @@ function handleSignUp() {
             </div>
             <div class="group">
               <input type="submit" class="button" value="Sign Up" @click="handleSignUp" />
-            </div>
-            <div class="hr"></div>
-            <div class="foot-lnk">
-              <label for="tab-1">Already Member?</label>
             </div>
           </div>
         </div>
@@ -126,6 +126,7 @@ a {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
 }
 
 .login-wrap {
@@ -143,7 +144,7 @@ a {
   width:100%;
   height:100%;
   position:absolute;
-  padding: 90px 70px 50px 70px;
+  padding: 50px 70px 50px 70px;
   text-align: left;
 }
 
@@ -198,6 +199,7 @@ input[type=checkbox] {
 .login-form{
   min-height:345px;
   position:relative;
+  margin-top: 20px;
   //perspective:1000px;
   transform-style:preserve-3d;
 }
@@ -221,7 +223,7 @@ input[type=checkbox] {
 .input,
 .button {
   border: none;
-  padding: 15px 20px;
+  padding: 10px 20px;
   border-radius: 25px;
   background: rgba(255, 255, 255, 0.1);
 }
@@ -229,6 +231,7 @@ input[type=checkbox] {
 .button {
   background: #1161ee;
   cursor: pointer;
+  margin-top: 20px;
 }
 
 .input[data-type='password'] {
