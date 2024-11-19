@@ -1,14 +1,17 @@
 <template>
   <FilteringWord />
+  <ChatBot/>
 </template>
 
 <script>
 import FilteringWord from "@/components/FilteringWord.vue";
+import ChatBot from "@/components/ChatBot.vue";
 
 export default {
   name: 'App',
   components: {
     FilteringWord
+    ChatBot
   }
 }
 </script>
