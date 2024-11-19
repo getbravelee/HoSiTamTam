@@ -5,6 +5,8 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -20,6 +22,7 @@ public class SwaggerConfig {
                 .scheme("bearer")
                 .bearerFormat("JWT")
         );
+
         return new OpenAPI()
                 .components(new Components())
                 .info(apiInfo())
@@ -31,5 +34,15 @@ public class SwaggerConfig {
                 .title("API Test") // API의 제목
                 .description("Let's practice Swagger UI") // API에 대한 설명
                 .version("1.0.0"); // API의 버전
+    }
+
+    @Bean
+    public GroupedOpenApi allApi() {
+        return GroupedOpenApi.builder().group("hositamtam-all").pathsToMatch("/**").build();
+    }
+
+    @Bean
+    public GroupedOpenApi authApi() {
+        return GroupedOpenApi.builder().group("hositamtam-auth").pathsToMatch("/auth/**").build();
     }
 }

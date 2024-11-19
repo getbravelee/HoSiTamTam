@@ -1,22 +1,33 @@
 package com.suleekyuri.hositamtam.user.service;
 
+import com.suleekyuri.hositamtam.auth.dto.LoginDto;
+import com.suleekyuri.hositamtam.jwt.JwtProvider;
 import com.suleekyuri.hositamtam.mapper.UserMapper;
 import com.suleekyuri.hositamtam.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl implements UserService {
+
     private final UserMapper userMapper;
+    private final JwtProvider jwtProvider;
+    private final AuthenticationManager authenticationManager;
+    private final BCryptPasswordEncoder passwordEncoder;  // 비밀번호 암호화 처리
 
     @Autowired
-    public UserServiceImpl(UserMapper userMapper) {
+    public UserServiceImpl(UserMapper userMapper, JwtProvider jwtProvider, AuthenticationManager authenticationManager, BCryptPasswordEncoder passwordEncoder) {
         this.userMapper = userMapper;
+        this.jwtProvider = jwtProvider;
+        this.authenticationManager = authenticationManager;
+        this.passwordEncoder = passwordEncoder;  // BCryptPasswordEncoder 주입
     }
 
     @Override
     public User getUserByUserLoginId(String userLoginId) {
-        // userLoginId를 기준으로 사용자를 조회
         return userMapper.findByLoginId(userLoginId);
     }
 
@@ -27,6 +38,38 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void registerUser(User user) {
-        userMapper.insertUser(user);
+        // 이미 해당 아이디가 존재하지 않는 경우에만 등록
+        if (user.getUserLoginId().length() >= 4 && getUserByUserLoginId(user.getUserLoginId()) == null) {
+            // 비밀번호를 암호화하여 새로운 User 객체를 생성
+            String encryptedPassword = passwordEncoder.encode(user.getUserLoginPassword());  // 암호화
+            // 불변 객체이므로, 암호화된 비밀번호로 새 User 객체 생성
+            User newUser = User.builder()
+                    .userId(user.getUserId())
+                    .userLoginId(user.getUserLoginId())
+                    .userLoginPassword(encryptedPassword)
+                    .userNickname(user.getUserNickname())
+                    .userEmail(user.getUserEmail())
+                    .build();
+            userMapper.insertUser(newUser); // 암호화된 비밀번호로 새 User 객체를 저장
+        }
+    }
+
+    @Override
+    public String loginUser(LoginDto loginDto) {
+        User user = getUserByUserLoginId(loginDto.getUserLoginId());
+        if (user == null || !passwordEncoder.matches(loginDto.getUserPassword(), user.getUserLoginPassword())) {
+            // 비밀번호가 맞지 않으면 예외 던지기
+            throw new IllegalArgumentException("아이디 또는 비밀번호가 잘못되었습니다.");
+        }
+
+        // 인증 진행
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                loginDto.getUserLoginId(), loginDto.getUserPassword());
+
+        // 인증을 AuthenticationManager에 위임
+        authenticationManager.authenticate(authenticationToken);
+
+        // JWT 토큰 생성
+        return jwtProvider.create(user);
     }
 }

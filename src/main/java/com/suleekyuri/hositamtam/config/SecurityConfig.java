@@ -1,73 +1,74 @@
 package com.suleekyuri.hositamtam.config;
 
+import com.suleekyuri.hositamtam.jwt.JwtAuthenticationFilter;
 import com.suleekyuri.hositamtam.user.service.CustomUserDetailsService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
+import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 
+@Slf4j
 @Configuration
-@EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomUserDetailsService customUserDetailsService;
 
-    public SecurityConfig(CustomUserDetailsService customUserDetailsService) {
-        this.customUserDetailsService = customUserDetailsService;
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        // http 시큐리티 빌더
+        http
+                .cors(Customizer.withDefaults()) // WebMvcConfig에서 이미 설정했으므로 기본 cors 설정
+                .csrf(csrf -> csrf
+                        .disable()) // csrf는 현재 사용하지 않으므로 disable
+                .httpBasic(httpBasic -> httpBasic
+                        .disable()) // token 방식 사용하므로 basic 방식 disable
+                .sessionManagement(management -> management // 세션 기반이 아님을 선언
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(requests -> requests
+                        // 이 경로들은 인증 안 해도 됨
+                        .requestMatchers("/**")
+                        .permitAll()
+                        .anyRequest() // 그 외의 경로는 모두 인증해야 됨
+                        .authenticated())
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(new Http403ForbiddenEntryPoint())); // 403 EntryPoint 추가
+        // 매 요청마다 CorsFilter 실행 후 jwtAuthenticationFilter 실행
+        http.addFilterAfter(jwtAuthenticationFilter, CorsFilter.class);
+
+        return http.build();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // AuthenticationManager 설정
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder authenticationManagerBuilder =
                 http.getSharedObject(AuthenticationManagerBuilder.class);
-        authenticationManagerBuilder
-                .userDetailsService(customUserDetailsService)
-                .passwordEncoder(passwordEncoder());
 
-        return authenticationManagerBuilder.build(); // `and()` 없이 build()로 처리
-    }
+        authenticationManagerBuilder.userDetailsService(customUserDetailsService)
+                .passwordEncoder(bCryptPasswordEncoder());
 
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                .authorizeRequests(authz -> authz
-//                        .requestMatchers("/login", "/register").permitAll()  // 로그인과 회원가입 페이지는 누구나 접근 가능
-//                        .anyRequest().authenticated()  // 다른 모든 요청은 인증 필요
-//                )
-//                .formLogin(form -> form
-//                        .loginPage("/login")  // 커스텀 로그인 페이지
-//                        .permitAll()
-//                );
-//        return http.build();
-//    }
-
-    // Swagger UI와 OpenAPI 문서에 대한 접근 허용
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests(authz -> authz
-                        // Swagger UI와 API 문서에 대한 접근을 허용
-                        .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        // 나머지 모든 요청은 인증 필요
-                        .anyRequest().authenticated()
-                )
-                .formLogin(form -> form
-                        .loginPage("/login")  // 로그인 페이지 설정
-                        .permitAll()           // 로그인 페이지는 누구나 접근 가능
-                );
-
-        return http.build();
+        return authenticationManagerBuilder.build();
     }
 }
