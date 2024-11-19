@@ -33,7 +33,7 @@ const toggleModal = () => {
   position: fixed;
   top: 14px;
   right: 20px;
-  background-color: #3b5998; /* Dark blue color */
+  background-color: #3b5998;
   color: white;
   padding: 8px 15px;
   border: none;
