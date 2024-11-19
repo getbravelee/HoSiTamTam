@@ -1,10 +1,10 @@
 <script setup>
-
+import SearchBar from "@/components/SearchBar.vue";
 </script>
 
 <template>
   <div>
-    검색창만 보일 곳
+    <SearchBar :backgroundColor="'transparent'"/>
   </div>
 </template>
 

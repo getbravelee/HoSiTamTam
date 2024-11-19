@@ -4,11 +4,13 @@
 // import FilteringWord from "./components/FilteringWord.vue";
 import SideMenu from "@/components/SideMenu.vue";
 import { RouterView } from "vue-router";
+import MapMain from "@/components/MapMain.vue";
 import LoginBtn from "@/components/LoginBtn.vue";
 </script>
 
 <template>
   <div id="app">
+    <MapMain />
     <LoginBtn />
     <SideMenu />
     <RouterView />
