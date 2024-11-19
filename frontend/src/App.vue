@@ -17,6 +17,7 @@ import LoginBtn from "@/components/LoginBtn.vue";
   </div>
 </template>
 
+
 <style>
 /* 스타일 추가 */
 #app {
