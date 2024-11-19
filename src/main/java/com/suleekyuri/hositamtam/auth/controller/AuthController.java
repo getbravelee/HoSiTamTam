@@ -56,10 +56,14 @@ public class AuthController {
             // 성공 응답 반환 (HTTP 200)
             CMRespDto<?> response = new CMRespDto<>(1, "회원가입 성공", "회원가입이 완료되었습니다.");
             return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            // 실패 응답 반환 (HTTP 400 - Bad Request)
+            CMRespDto<?> response = new CMRespDto<>(-1, "회원가입 실패", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         } catch (Exception e) {
             log.error("회원가입 실패", e);
             // 실패 응답 반환 (HTTP 500)
-            CMRespDto<?> response = new CMRespDto<>(-1, "회원가입 실패", e.getMessage());
+            CMRespDto<?> response = new CMRespDto<>(-1, "회원가입 실패", "서버 오류가 발생했습니다.");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }

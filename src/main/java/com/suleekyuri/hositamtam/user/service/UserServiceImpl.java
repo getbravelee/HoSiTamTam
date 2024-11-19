@@ -38,20 +38,27 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void registerUser(User user) {
-        // 이미 해당 아이디가 존재하지 않는 경우에만 등록
-        if (user.getUserLoginId().length() >= 4 && getUserByUserLoginId(user.getUserLoginId()) == null) {
-            // 비밀번호를 암호화하여 새로운 User 객체를 생성
-            String encryptedPassword = passwordEncoder.encode(user.getUserLoginPassword());  // 암호화
-            // 불변 객체이므로, 암호화된 비밀번호로 새 User 객체 생성
-            User newUser = User.builder()
-                    .userId(user.getUserId())
-                    .userLoginId(user.getUserLoginId())
-                    .userLoginPassword(encryptedPassword)
-                    .userNickname(user.getUserNickname())
-                    .userEmail(user.getUserEmail())
-                    .build();
-            userMapper.insertUser(newUser); // 암호화된 비밀번호로 새 User 객체를 저장
+        // 아이디가 4글자 미만인 경우 예외 발생
+        if (user.getUserLoginId().length() < 4) {
+            throw new IllegalArgumentException("아이디는 4글자 이상이어야 합니다.");
         }
+
+        // 이미 해당 아이디가 존재하는 경우
+        if (getUserByUserLoginId(user.getUserLoginId()) != null) {
+            throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
+        }
+
+        // 비밀번호를 암호화하여 새로운 User 객체를 생성
+        String encryptedPassword = passwordEncoder.encode(user.getUserLoginPassword());  // 암호화
+        // 불변 객체이므로, 암호화된 비밀번호로 새 User 객체 생성
+        User newUser = User.builder()
+                .userId(user.getUserId())
+                .userLoginId(user.getUserLoginId())
+                .userLoginPassword(encryptedPassword)
+                .userNickname(user.getUserNickname())
+                .userEmail(user.getUserEmail())
+                .build();
+        userMapper.insertUser(newUser); // 암호화된 비밀번호로 새 User 객체를 저장
     }
 
     @Override
