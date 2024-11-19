@@ -12,8 +12,8 @@ import ChatBot from "@/components/ChatBot.vue";
 export default {
   name: 'App',
   components: {
-    SearchBar
-    FilteringWord
+    SearchBar,
+    FilteringWord,
     ChatBot
   }
 }

@@ -1,7 +1,7 @@
 package com.suleekyuri.hositamtam.filtering.service;
 
 import com.suleekyuri.hositamtam.filtering.dto.ApartmentDto;
-import com.suleekyuri.hositamtam.mapper.ApartmentMapper;
+import com.suleekyuri.hositamtam.filtering.mapper.ApartmentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

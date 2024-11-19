@@ -1,4 +1,4 @@
-package com.suleekyuri.hositamtam.mapper;
+package com.suleekyuri.hositamtam.filtering.mapper;
 
 
 import com.suleekyuri.hositamtam.filtering.dto.ApartmentDto;

@@ -1,6 +1,6 @@
 package com.suleekyuri.hositamtam.search.service;
 
-import com.suleekyuri.hositamtam.mapper.SearchMapper;
+import com.suleekyuri.hositamtam.search.mapper.SearchMapper;
 import com.suleekyuri.hositamtam.search.dto.SuggestionDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

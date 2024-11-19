@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.hositamtam.filtering.mapper.ApartmentMapper">
+<mapper namespace="com.suleekyuri.hositamtam.filtering.mapper.ApartmentMapper">
 
-    <select id="findByFilters" parameterType="map" resultType="com.hositamtam.filtering.dto.ApartmentDto">
+    <select id="findByFilters" parameterType="map" resultType="com.suleekyuri.hositamtam.filtering.dto.ApartmentDto">
         SELECT id, area, price, type, location_name AS locationName
         FROM Apartments
         WHERE
