@@ -1,15 +1,18 @@
 <template>
+  <SearchBar />
   <FilteringWord />
   <ChatBot/>
 </template>
 
 <script>
+import SearchBar from "@/components/SearchBar.vue";
 import FilteringWord from "@/components/FilteringWord.vue";
 import ChatBot from "@/components/ChatBot.vue";
 
 export default {
   name: 'App',
   components: {
+    SearchBar
     FilteringWord
     ChatBot
   }
