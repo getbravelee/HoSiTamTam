@@ -1,31 +1,33 @@
 <template>
   <div>
-    <h2>카테고리별 장소 검색하기</h2>
-    <div id="map" style="width:100%;height:350px;position:relative;overflow:hidden;"></div>
+    <!-- 지도 -->
+    <div id="map"></div>
 
+    <!-- 카테고리 선택 -->
     <ul id="category">
       <li v-for="(category) in categories" :key="category.id"
           :class="{'on': currCategory === category.id}"
           @click="onCategoryClick(category)">
         <span :class="['category_bg', category.icon]"></span>
-        {{ category.name }}
+        <span>{{ category.name }}</span>
       </li>
     </ul>
 
     <!-- 지도 확대, 축소 컨트롤 div -->
-    <div class="custom_zoomcontrol radius_border">
+    <div class="zoom-control">
         <span @click="zoomIn">
-          <img src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_plus.png" alt="확대">
+          <font-awesome-icon :icon="['fas', 'plus']" size="xl"/>
         </span>
       <span @click="zoomOut">
-          <img src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_minus.png" alt="축소">
+          <font-awesome-icon :icon="['fas', 'minus']" size="xl"/>
         </span>
     </div>
+
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import {ref, onMounted} from 'vue';
 
 // 카카오 지도 관련 변수
 const map = ref(null);
@@ -35,12 +37,12 @@ const markers = ref([]);
 
 // 카테고리 정보 (아이콘, 이름 등)
 const categories = ref([
-  { id: 'BK9', name: '은행', icon: 'bank' },
-  { id: 'MT1', name: '마트', icon: 'mart' },
-  { id: 'PM9', name: '약국', icon: 'pharmacy' },
-  { id: 'OL7', name: '주유소', icon: 'oil' },
-  { id: 'CE7', name: '카페', icon: 'cafe' },
-  { id: 'CS2', name: '편의점', icon: 'store' }
+  {id: 'BK9', name: '은행', icon: 'bank'},
+  {id: 'MT1', name: '마트', icon: 'mart'},
+  {id: 'PM9', name: '약국', icon: 'pharmacy'},
+  {id: 'OL7', name: '주유소', icon: 'oil'},
+  {id: 'CE7', name: '카페', icon: 'cafe'},
+  {id: 'CS2', name: '편의점', icon: 'store'}
 ]);
 
 const currCategory = ref(''); // 현재 선택된 카테고리
@@ -54,7 +56,7 @@ const loadMap = () => {
   };
 
   map.value = new window.kakao.maps.Map(container, options);
-  placeOverlay.value = new window.kakao.maps.CustomOverlay({ zIndex: 2 });
+  placeOverlay.value = new window.kakao.maps.CustomOverlay({zIndex: 2});
   contentNode.value = document.createElement('div');
   contentNode.value.className = 'placeinfo_wrap';
 };
@@ -81,7 +83,7 @@ const onCategoryClick = (category) => {
 const searchPlaces = (category) => {
   if (!category) return;
   const ps = new window.kakao.maps.services.Places(map.value);
-  ps.categorySearch(category, placesSearchCB, { useMapBounds: true });
+  ps.categorySearch(category, placesSearchCB, {useMapBounds: true});
 };
 
 const placesSearchCB = (data, status) => {
@@ -130,25 +132,22 @@ const removeMarker = () => {
 };
 
 const displayPlaceInfo = (place) => {
-  let content = `
-    <div class="placeinfo">
-      <a class="title" href="${place.place_url}" target="_blank">${place.place_name}</a>
+  const style = document.createElement('style');
+  style.innerHTML = `
+    .placeinfo:hover {
+      color: #FFFFFF !important;
+      background-color: #30467B !important;
+    }
   `;
+  document.head.appendChild(style);
 
-  if (place.road_address_name) {
-    content += `
-      <span>${place.road_address_name}</span>
-      <span class="jibun"> (지번 : ${place.address_name})</span>
-    `;
-  } else {
-    content += `<span>${place.address_name}</span>`;
-  }
-
-  content += `
-      <span class="tel">${place.phone}</span>
-    </div>
-    <div class="after"></div>
-  `;
+  const content = `
+  <div class="placeinfo" style="position: relative; bottom: 50px; padding: 5px; border-radius: 6px; border: 1px solid #ccc; border-bottom: 2px solid #ddd; float: left; box-shadow: 0px 1px 2px #888; background-color: #FFFFFF">
+    <a class="title" href="${place.place_url}" target="_blank" style="display: block; text-decoration: none; color: #000; text-align: center; border-radius: 6px; font-size: 14px; font-weight: bold; overflow: hidden;">
+      ${place.place_name}
+    </a>
+  </div>
+`;
 
   contentNode.value.innerHTML = content;
   placeOverlay.value.setContent(contentNode.value);
@@ -175,10 +174,19 @@ onMounted(() => {
 </script>
 
 <style scoped>
+#map {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
 #category {
   position: absolute;
   top: 10px;
-  left: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0;
   border-radius: 5px;
   border: 1px solid #909090;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
@@ -186,6 +194,7 @@ onMounted(() => {
   overflow: hidden;
   z-index: 2;
 }
+
 #category li {
   float: left;
   list-style: none;
@@ -195,85 +204,40 @@ onMounted(() => {
   text-align: center;
   cursor: pointer;
 }
+
 #category li.on {
   background: #eee;
 }
+
 #category li:hover {
   background: #ffe6e6;
   border-left: 1px solid #acacac;
   margin-left: -1px;
 }
-#category li:last-child {
-  margin-right: 0;
-  border-right: 0;
-}
-#category li span {
-  display: block;
-  margin: 0 auto 3px;
-  width: 27px;
-  height: 28px;
-}
-.placeinfo_wrap {
-  position: absolute;
-  bottom: 28px;
-  left: -150px;
-  width: 300px;
-}
-.placeinfo {
-  position: relative;
-  width: 100%;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  border-bottom: 2px solid #ddd;
-  padding-bottom: 10px;
-  background: #fff;
-}
-.placeinfo .title {
-  font-weight: bold;
-  font-size: 14px;
-  border-radius: 6px 6px 0 0;
-  margin: -1px -1px 0 -1px;
-  padding: 10px;
-  color: #fff;
-  background: #d95050;
-  background: #d95050 url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png) no-repeat right 14px center;
-}
-.placeinfo .tel {
-  color: #0f7833;
-}
-.placeinfo .jibun {
-  color: #999;
-  font-size: 11px;
-  margin-top: 0;
-}
 
-.custom_zoomcontrol {
+.zoom-control {
   position: absolute;
-  top: 50px;
-  right: 10px;
+  bottom: 50px;
+  right: 20px;
   width: 36px;
   height: 80px;
   overflow: hidden;
   z-index: 1;
-  background-color: #f5f5f5;
+  background-color: #fffdfd;
+  border: 1px #bfbfbf solid;
+  border-radius: 5px;
 }
 
-.custom_zoomcontrol span {
-  display: block;
+.zoom-control span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 36px;
   height: 40px;
-  text-align: center;
   cursor: pointer;
 }
 
-.custom_zoomcontrol span img {
-  width: 15px;
-  height: 15px;
-  padding: 12px 0;
-  border: none;
-}
-
-.custom_zoomcontrol span:first-child {
+.zoom-control span:first-child {
   border-bottom: 1px solid #bfbfbf;
 }
 </style>

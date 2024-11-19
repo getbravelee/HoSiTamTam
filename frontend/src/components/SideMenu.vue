@@ -41,6 +41,7 @@
   background-color: #f4f4f4;
   box-sizing: border-box;
   overflow-y: auto;
+  z-index: 100;
 }
 
 ul {
