@@ -11,7 +11,9 @@ public class HositamtamApplication {
 
 		Dotenv dotenv = Dotenv.configure().load();
 		dotenv.entries().forEach(entry -> System.setProperty(entry.getKey(), entry.getValue()));
+
 		SpringApplication.run(HositamtamApplication.class, args);
 	}
 
 }
+

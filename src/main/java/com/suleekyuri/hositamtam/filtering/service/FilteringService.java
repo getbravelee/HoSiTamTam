@@ -1,23 +1,23 @@
 package com.suleekyuri.hositamtam.filtering.service;
 
-import com.suleekyuri.hositamtam.filtering.dto.ApartmentDto;
-import com.suleekyuri.hositamtam.filtering.mapper.ApartmentMapper;
+import com.suleekyuri.hositamtam.filtering.dto.FilteringDto;
+import com.suleekyuri.hositamtam.filtering.mapper.FilteringMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class ApartmentService {
+public class FilteringService {
 
     @Autowired
-    private final ApartmentMapper apartmentMapper;
+    private final FilteringMapper apartmentMapper;
 
-    public ApartmentService(ApartmentMapper apartmentMapper) {
+    public FilteringService(FilteringMapper apartmentMapper) {
         this.apartmentMapper = apartmentMapper;
     }
 
-    public List<ApartmentDto> getFilteredApartments(Integer area, Integer price, String type) {
+    public List<FilteringDto> getFilteredApartments(Integer area, Integer price, String type) {
         return apartmentMapper.findByFilters(area, price, type);
     }
 }

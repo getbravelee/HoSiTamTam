@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ApartmentDto {
+public class FilteringDto {
     private Long id;
     private Integer area;       // 평수
     private Integer price;      // 가격 (만원 단위)

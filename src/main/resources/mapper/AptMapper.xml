@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suleekyuri.hositamtam.apt.mapper.AptMapper">
+
+    <select id="getAptsByRegion" parameterType="com.suleekyuri.hositamtam.apt.dto.AptDto">
+        select
+            dong_code AS dongCode,
+            dong_name AS dongName,
+            apt_id AS aptId,
+            apt_name AS aptName,
+            apt_trade_type AS aptTradeType,
+            apt_max_sales_price AS aptMaxSalesPrice,
+            apt_img AS aptImg,
+            is_like AS isLike
+        from
+            apartment
+        where
+            dong_code = #{dongCode}
+    </select>
