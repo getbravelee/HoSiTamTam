@@ -1,78 +1,58 @@
 package com.suleekyuri.hositamtam.chatGPT;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.ai.chat.messages.Message;
+import org.springframework.ai.chat.messages.SystemMessage;
+import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 public class ChatService {
 
-    @Value("${kakao-admin-key}")
-    private String apiKey;
+    private final ChatModel chatModel;
 
     @Autowired
-    private final RestTemplate restTemplate;
-
-    public ChatService(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
+    public ChatService(ChatModel chatModel) {
+        this.chatModel = chatModel;
     }
 
     public String getChatbotResponse(String userInput) {
-        String url = "https://api.openai.com/v1/chat/completions";
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(apiKey);
+        // 명확한 지침 제공
+        String command = """
+                <instruction>
+                You are the best real estate expert in Korea.
+                I always answer in Korean.
+                See www.naver.com .
+                See placeview.co.kr .
+                See www.hogangnono.com .
+                It informs the actual transaction price of apartments in Korea based on the latest transaction details. Information provides five recent actual transaction prices for each acreage.
+                It informs you of nearby convenience facilities (convenience stores, transportation, school districts, etc.) in detail. It provides various information such as branch name, distance, etc. in detail.
+                When you tell me about apartment price trends and trends, show them in easy-to-see and pretty tables and graphs.
+                When you give information about local school districts, please give information about the distance of daycare centers, kindergartens, elementary schools, middle schools, and high schools, and what the actual school district level is
+                </instruction>
+                """;
 
-        // 사용할 모델의 이름을 여기서 지정합니다.
-        String requestBody = String.format(
-                "{\"model\": \"gpt-3.5-turbo\", \"messages\": [{\"role\": \"user\", \"content\": \"%s\"}]}",
-                userInput
-        );
+        PromptTemplate template = new PromptTemplate(command);
+        template.add("userInput", userInput);  // 사용자 입력을 템플릿에 추가
 
-        HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
-        ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
-        String responseBody = response.getBody();
+        String message = template.render();
+        Message userMessage = new UserMessage(message);
+        Message systemMessage = new SystemMessage("""
+                You are the best real estate expert in Korea.
+                I always answer in Korean.
+                See www.naver.com .
+                See placeview.co.kr .
+                See www.hogangnono.com .
+                It informs the actual transaction price of apartments in Korea based on the latest transaction details. Information provides five recent actual transaction prices for each acreage.
+                It informs you of nearby convenience facilities (convenience stores, transportation, school districts, etc.) in detail. It provides various information such as branch name, distance, etc. in detail.
+                When you tell me about apartment price trends and trends, show them in easy-to-see and pretty tables and graphs.
+                When you give information about local school districts, please give information about the distance of daycare centers, kindergartens, elementary schools, middle schools, and high schools, and what the actual school district level is
+                """);
 
-        // 응답에서 실제 챗봇의 응답 메시지만 추출
-        String chatResponse = extractChatbotMessage(responseBody);
-        System.out.println(chatResponse);
-        return chatResponse;
-    }
-    /*
-        public String getChatbotResponse(String userInput) {
-        String url = "https://api.openai.com/v1/chat/completions";
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(apiKey);
-        // 사용할 모델의 이름을 여기서 지정합니다.
-        String requestBody = String.format(
-                "{\"model\": \"gpt-3.5-turbo\", \"messages\": [{\"role\": \"user\", \"content\": \"%s\"}]}",
-                userInput
-        );
-
-        HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
-        ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
-        System.out.println(response.getBody());
-        return response.getBody();
-    }
-    */
-
-    private String extractChatbotMessage(String responseBody) {
-        // 응답 JSON에서 choices 배열의 첫 번째 요소의 message.content 추출
-        // 예를 들어: {"choices":[{"message":{"content":"안녕"}}]}
-        try {
-            JsonNode rootNode = new ObjectMapper().readTree(responseBody);
-            return rootNode.path("choices").get(0).path("message").path("content").asText();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "챗봇 응답을 처리하는 데 문제가 발생했습니다.";
-        }
+        // OpenAI API 호출하여 응답 받기
+        return chatModel.call(userMessage, systemMessage);  // 챗봇 응답 반환
     }
 }
