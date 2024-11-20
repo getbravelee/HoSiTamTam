@@ -36,7 +36,7 @@ export default {
   methods: {
     fetchSuggestions() {
       if (this.query.length > 1) {
-        axios.get(`/api/search/suggestions?keyword=${this.query}`)
+        axios.get(`/search/suggestions?keyword=${this.query}`)
             .then(response => {
               this.suggestions = response.data; // 서버에서 받은 제안 목록
             })
