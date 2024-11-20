@@ -16,6 +16,7 @@
     "axios": "^1.7.7",
     "bootstrap-vue-3": "^0.5.1",
     "core-js": "^3.8.3",
+    "pinia": "^2.2.6",
     "vue": "^3.2.13",
     "vue-route": "^1.5.1",
     "vue-router": "^4.4.5",

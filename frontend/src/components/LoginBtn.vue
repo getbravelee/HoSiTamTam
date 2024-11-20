@@ -1,27 +1,31 @@
 <script setup>
 import { ref, computed } from 'vue';
 import LoginModal from "@/components/LoginModal.vue";
+import {useUserStore} from "@/stores/user";
 
-const isLoggedIn = ref(false);
+const userStore = useUserStore();
 const showModal = ref(false);
-
-const buttonText = computed(() => (isLoggedIn.value ? '로그아웃' : '로그인'));
 
 const buttonClass = computed(() => ({
   'login-button': true,
-  // 'logged-in': isLoggedIn.value, // 로그인 성공 시 css 변경?
 }));
 
 const toggleModal = () => {
   showModal.value = !showModal.value;
 };
 
+const handleLogout = () => {
+  userStore.removeAuthToken();
+};
 </script>
 
 <template>
   <div>
-    <button @click="toggleModal" :class="buttonClass">
-      {{ buttonText }}
+    <button v-if="userStore.isLogin" @click="handleLogout" :class="buttonClass" >
+      로그아웃
+    </button>
+    <button v-else @click="toggleModal" :class="buttonClass">
+      로그인
     </button>
 
     <LoginModal v-if="showModal" :showModal="showModal" @closeModal="showModal = false" />

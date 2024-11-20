@@ -2,9 +2,10 @@
 import {defineEmits, onMounted, ref, watch} from 'vue';
 import axios from "axios";
 import {useCookies} from "vue3-cookies";
+import {useUserStore} from "@/stores/user";
 
 const { cookies } = useCookies();
-
+const userStore = useUserStore();
 const emit = defineEmits(['closeModal']);
 
 const tab = ref('signIn'); // Default tab is Sign In
@@ -26,8 +27,10 @@ const errors = ref({
 const validateId = () => {
   if (id.value.length < 4 && id.value !== '') {
     errors.value.id = '아이디는 4자 이상이어야 합니다';
+    return false;
   } else {
     errors.value.id = '';
+    return true;
   }
 };
 
@@ -44,8 +47,10 @@ const validatePassword = () => {
 const validateRepeatPassword = () => {
   if (password.value !== repeatPassword.value) {
     errors.value.repeatPassword = '비밀번호가 일치하지 않습니다';
+    return false;
   } else {
     errors.value.repeatPassword = '';
+    return true;
   }
 };
 
@@ -53,16 +58,20 @@ const validateEmail = () => {
   const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
   if (email.value && !emailPattern.test(email.value)) {
     errors.value.email = '유효한 이메일 주소를 입력해주세요';
+    return false;
   } else {
     errors.value.email = '';
+    return true;
   }
 };
 
 const validateUsername = () => {
   if (username.value.trim() === '') {
     errors.value.username = '사용자 이름을 입력해주세요';
+    return false;
   } else {
     errors.value.username = '';
+    return true;
   }
 };
 
@@ -116,7 +125,7 @@ function handleSignIn() {
       } else {
         cookies.remove('userId');
       }
-      localStorage.setItem('authToken', response.data.data); // 임시로 로컬에 토큰 저장
+      userStore.setAuthToken(response.data.data);
       emit('closeModal');
     } else {
       console.log(response.data.msg);
@@ -128,22 +137,21 @@ function handleSignIn() {
 
 // 회원가입 버튼 클릭 시
 function handleSignUp() {
-  const isIdValid = validateId.value;
-  const isPasswordValid = validatePassword.value;
-  const isRepeatPasswordValid = validateRepeatPassword.value;
-  const isEmailValid = validateEmail.value;
-  const isUsernameValid = validateUsername.value;
-
+  const isIdValid = validateId();
+  const isPasswordValid = validatePassword();
+  const isRepeatPasswordValid = validateRepeatPassword();
+  const isEmailValid = validateEmail();
+  const isUsernameValid = validateUsername();
   if (!isIdValid || !isPasswordValid || !isEmailValid || !isUsernameValid || !isRepeatPasswordValid) {
     alert("모든 필드를 정확히 입력해주세요.");
     return;
   }
 
   axios.post('/auth/register', {
-    userLoginId: id.value,
-    userPassword: password.value,
-    userNickname: username.value,
-    userEmail: email.value,
+    "userLoginId": id.value,
+    "userPassword": password.value,
+    "userNickname": username.value,
+    "userEmail": email.value,
   }).then((response) => {
     if (response.data.code === 1) {
       console.log(response.data.msg);
