@@ -33,18 +33,23 @@ import {ref} from "vue";
 
 export default {
   props: {
+    value: {
+      type: String,
+      default: ''
+    },
     backgroundColor: {
       type: String,
     }
   },
-  setup() {
+  setup(props, {emit}) {
     const router = useRouter();
-    const query = ref("");
+    const query = ref(props.value);
     const results = ref([]);
     const showResults = ref(false);
     const isInput = ref(false);
     const debounceTimer = ref(null);
     const isClickingSearchResult = ref(false);
+
 
     const onSearch = () => {
       const allLocations = ["서울", "부산", "대구", "인천", "광주", "대전", "울산"];
@@ -53,6 +58,7 @@ export default {
       );
       showResults.value = results.value.length > 0;
 
+      emit('results', results.value);
       // if (this.query.length > 1) {
       //   axios.get(`/api/search/suggestions?keyword=${this.query}`)
       //       .then(response => {
