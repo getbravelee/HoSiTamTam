@@ -10,145 +10,145 @@
             @blur="onBlur()"
             @input="onInput()"
             @compositionstart="onCompositionStart"
+            @keyup.enter="handleEnter"
         />
         <font-awesome-icon :icon="['fas', 'magnifying-glass']" class="search-icon"/>
       </div>
     </div>
-
-    <!--    <table v-if="suggestions.length" border="1">-->
-    <!--      <thead>-->
-    <!--      <tr>-->
-    <!--        <th>ID</th>-->
-    <!--        <th>제안 이름</th>-->
-    <!--      </tr>-->
-    <!--      </thead>-->
-    <!--      <tbody>-->
-    <!--      <tr v-for="suggestion in suggestions" :key="suggestion.id" @click="selectSuggestion(suggestion)">-->
-    <!--        <td>{{ suggestion.id }}</td>-->
-    <!--        <td>{{ suggestion.locationName }}</td>-->
-    <!--      </tr>-->
-    <!--      </tbody>-->
-    <!--    </table>-->
+    <!-- 결과 목록 -->
     <div v-if="showResults && results.length" class="search-results" @mousedown="onResultClick">
       <ul>
-        <li v-for="(result) in results" :key="result.id" @click="selectSuggestion(result)">{{ result.locationName }}</li>
+        <li v-for="(result, index) in results" :key="index" @click="selectSuggestion(result)">{{ result }}</li>
       </ul>
+<!--      <ul>-->
+<!--        <li v-for="(result) in results" :key="result.id" @click="selectSuggestion(result)">{{ result.loationName }}</li>-->
+<!--      </ul>-->
     </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import { useRouter } from 'vue-router';
+import {ref} from "vue";
 
 export default {
-  // data() {
-  //   return {
-  //     query: '',
-  //     suggestions: [],
-  //   };
-  // },
-  // methods: {
-  //   fetchSuggestions() {
-  //     if (this.query.length > 1) {
-  //       axios.get(`/api/search/suggestions?keyword=${this.query}`)
-  //           .then(response => {
-  //             this.suggestions = response.data; // 서버에서 받은 제안 목록
-  //           })
-  //           .catch(error => {
-  //             console.error("Error fetching suggestions:", error);
-  //           });
-  //     } else {
-  //       this.suggestions = [];
-  //     }
-  //   },
-  //   selectSuggestion(suggestion) {
-  //     this.query = suggestion.locationName; // 선택한 제안으로 검색어 업데이트
-  //     this.suggestions = []; // 제안 목록 비우기
-  //   }
-  // }
   props: {
     backgroundColor: {
       type: String,
     }
   },
-  data() {
-    return {
-      query: "",
-      results: [],
-      showResults: false,
-      isInput: false,
-      debounceTimer: null,
-      isClickingSearchResult: false,
+  setup() {
+    const router = useRouter();
+    const query = ref("");
+    const results = ref([]);
+    const showResults = ref(false);
+    const isInput = ref(false);
+    const debounceTimer = ref(null);
+    const isClickingSearchResult = ref(false);
+
+    const onSearch = () => {
+      const allLocations = ["서울", "부산", "대구", "인천", "광주", "대전", "울산"];
+      results.value = allLocations.filter((location) =>
+          location.includes(query.value)
+      );
+      showResults.value = results.value.length > 0;
+
+      // if (this.query.length > 1) {
+      //   axios.get(`/api/search/suggestions?keyword=${this.query}`)
+      //       .then(response => {
+      //         this.results = response.data; // 서버에서 받은 제안 목록
+      //       })
+      //       .catch(error => {
+      //         console.error("Error fetching suggestions:", error);
+      //       });
+      // } else {
+      //   this.results = [];
+      // }
     };
-  },
-  methods: {
-    onSearch() {
-      // const allLocations = ["서울", "부산", "대구", "인천", "광주", "대전", "울산"];
-      // this.results = allLocations.filter((location) =>
-      //     location.includes(this.query)
-      // );
-      // this.showResults = this.results.length > 0;
-      if (this.query.length > 1) {
-        axios.get(`/api/search/suggestions?keyword=${this.query}`)
-            .then(response => {
-              this.results = response.data; // 서버에서 받은 제안 목록
-            })
-            .catch(error => {
-              console.error("Error fetching suggestions:", error);
-            });
-      } else {
-        this.results = [];
-      }
-    },
 
-    onInput() {
-      if (this.debounceTimer) {
-        clearTimeout(this.debounceTimer);
+    const onInput = () => {
+      if (debounceTimer.value) {
+        clearTimeout(debounceTimer.value);
       }
 
-      this.debounceTimer = setTimeout(() => {
-        if (!this.isComposing) {
-          this.onSearch();
-        }
+      debounceTimer.value = setTimeout(() => {
+        onSearch();
       }, 100);
-    },
+    };
 
-    hideResults() {
-      this.showResults = false;
-    },
-    inputEnded() {
-      this.isInput = false;
-    },
-    onResultClick() {
-      this.isClickingSearchResult = true;
-    },
-    onBlur() {
-      if (this.isClickingSearchResult) {
+    const hideResults = () => {
+      showResults.value = false;
+    };
+
+    const inputEnded = () => {
+      isInput.value = false;
+    };
+
+    const onResultClick = () => {
+      isClickingSearchResult.value = true;
+    };
+
+    const onBlur = () => {
+      if (isClickingSearchResult.value) {
         console.log("Click on search result, skipping blur");
-        this.isClickingSearchResult = false;
+        isClickingSearchResult.value = false;
         return;
       }
 
       console.log("Handling blur...");
-      this.hideResults();
-      this.inputEnded();
-    },
-    onCompositionStart() {
-      this.isInput = true;
-    },
-    onFocus() {
-      if (this.query.length > 0) {
-        this.isInput = true;
-        this.showResults = true;
+      hideResults();
+      inputEnded();
+    };
+
+    const onCompositionStart = () => {
+      isInput.value = true;
+    };
+
+    const onFocus = () => {
+      if (query.value.length > 0) {
+        isInput.value = true;
+        showResults.value = true;
       }
-    },
-    selectSuggestion(result) {
-      // this.query = result;
-      this.query = result.locationName;
-      this.results = [];
-      this.showResults = false;
-      this.isInput = false;
-    },
+    };
+
+    const selectSuggestion = (result) => {
+      query.value = result;
+      // query.value = result.locationName;
+      results.value = [];
+      showResults.value = false;
+      isInput.value = false;
+    };
+
+    const handleEnter = () => {
+      const data = results.value.map(item => item);
+      router.push({
+        name: 'search',
+        query: { query: query.value, results: results.value },  // query는 URL 쿼리로 전달
+        state: { results: data },  // results는 state로 전달
+      });
+
+      showResults.value = false;
+      results.value = [];
+    };
+
+    return {
+      query,
+      results,
+      showResults,
+      isInput,
+      debounceTimer,
+      isClickingSearchResult,
+      onSearch,
+      onInput,
+      hideResults,
+      inputEnded,
+      onResultClick,
+      onBlur,
+      onCompositionStart,
+      onFocus,
+      selectSuggestion,
+      handleEnter
+    };
   },
 };
 </script>
@@ -202,7 +202,7 @@ input {
   background: white;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   border-radius: 0 0 10px 10px;
-  z-index: 9;
+  z-index: 15;
 }
 
 .search-results ul {
