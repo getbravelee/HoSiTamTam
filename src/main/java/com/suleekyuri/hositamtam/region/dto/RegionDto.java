@@ -1,4 +1,2 @@
-package com.suleekyuri.hositamtam.region.dto;
-
-public class RegionDto {
+package com.suleekyuri.hositamtam.region.dto;public class RegionDto {
 }
