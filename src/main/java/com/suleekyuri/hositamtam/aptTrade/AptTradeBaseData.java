@@ -73,19 +73,22 @@ public class AptTradeBaseData {
     List<Integer> lawDongCode = new ArrayList<>();
 
     private List<Integer> monthList(int startMonth, int endMonth) {
-        int mid = startMonth;
-        List<Integer> month = new ArrayList<>();
-        while(mid <= endMonth) {
-            month.add(mid);
+        int current = startMonth;
+        List<Integer> months = new ArrayList<>();
+        while (current <= endMonth) {
+            months.add(current);
 
-            mid++;
-            if(mid % 100 > 12) {
-                mid += 100;
-                mid -= 12;
+            // 월 증가
+            int year = current / 100;  // 년도 추출
+            int month = current % 100; // 월 추출
+
+            if (month == 12) { // 12월에서 다음 년도로
+                current = (year + 1) * 100 + 1; // 다음 년도 1월
+            } else {
+                current++; // 월 증가
             }
-
         }
-        return month;
+        return months;
     }
 }
 

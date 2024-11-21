@@ -27,6 +27,7 @@ public class AptTradeService {
     public void callApiAndSaveData(String apiKey, List<Integer> list, List<Integer> monthList) throws IOException {
         String apiUrl = "https://apis.data.go.kr/1613000/RTMSDataSvcAptTrade/getRTMSDataSvcAptTrade";
         for(int m : monthList) {
+            System.out.println("====================" + m + "====================");
             for (int n : list) {
                 String lawdCd = ""+n;  // 지역코드 (예: 종로구)
                 String dealYmd = ""+m;  // 계약월
@@ -45,6 +46,7 @@ public class AptTradeService {
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
                 conn.setRequestProperty("Content-type", "application/json");
+                log.info("Request URL: {}", urlBuilder.toString());
 
                 BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 StringBuilder sb = new StringBuilder();
@@ -71,13 +73,21 @@ public class AptTradeService {
 
 
     private void processApiResponse(AptTradeSave apiResponse) {
-        if (apiResponse.getBody() != null && apiResponse.getBody().getItems() != null) {
-            List<AptTradeSave.Item> items = apiResponse.getBody().getItems().getItemList();
-            List<AptTradeData> trades = items.stream()
-                    .map(this::convertToEntity)
-                    .collect(Collectors.toList());
-            aptTradeDataRepository.saveAll(trades);
+        if (apiResponse == null || apiResponse.getBody() == null || apiResponse.getBody().getItems() == null) {
+            log.warn("No data found in API response");
+            return;
         }
+
+        List<AptTradeSave.Item> items = apiResponse.getBody().getItems().getItemList();
+        if (items == null || items.isEmpty()) {
+            log.warn("No items found in API response");
+            return;
+        }
+
+        List<AptTradeData> trades = items.stream()
+                .map(this::convertToEntity)
+                .collect(Collectors.toList());
+        aptTradeDataRepository.saveAll(trades);
     }
 
     private AptTradeData convertToEntity(AptTradeSave.Item item) {
