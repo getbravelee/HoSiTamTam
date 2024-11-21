@@ -6,6 +6,7 @@ import SearchView from "@/views/SearchView.vue";
 import SavedView from "@/views/SavedView.vue";
 import RegionListView from "@/views/RegionListView.vue";
 import AptListView from "@/views/AptListView.vue";
+import AptDetailView from "@/views/AptDetailView.vue";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -47,7 +48,13 @@ const router = createRouter({
                     name: "aptList",
                     component: AptListView,
                     props: true,
-                }
+                },
+                {
+                    path: "aptDetail/:aptId",
+                    name: "aptDetail",
+                    component: AptDetailView,
+                    props: true,
+                },
             ]
         },
     ],

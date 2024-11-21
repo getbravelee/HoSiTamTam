@@ -20,7 +20,8 @@
     "vue": "^3.2.13",
     "vue-route": "^1.5.1",
     "vue-router": "^4.4.5",
-    "vue3-cookies": "^1.0.6"
+    "vue3-cookies": "^1.0.6",
+    "vue3-multi-slider": "^0.0.4"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
