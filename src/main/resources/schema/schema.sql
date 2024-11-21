@@ -1,3 +1,4 @@
+-- 아파트 매매
 CREATE TABLE apt_trade (
                            id BIGINT AUTO_INCREMENT PRIMARY KEY,
                            apt_name VARCHAR(100) NOT NULL,         -- 단지명
@@ -17,6 +18,31 @@ CREATE TABLE apt_trade (
                            estate_agent_address VARCHAR(300)       -- 중개사 소재지
 );
 
+-- 아파트 전월세
+CREATE TABLE apt_rent (
+                          id BIGINT AUTO_INCREMENT PRIMARY KEY,          -- 고유 식별자
+                          apt_name VARCHAR(255) NOT NULL,               -- 아파트 이름
+                          build_year INT NOT NULL,                      -- 건축 연도
+                          contract_term VARCHAR(255),                   -- 계약 기간
+                          contract_type VARCHAR(255),                   -- 계약 유형
+                          deal_day INT NOT NULL,                        -- 거래 일
+                          deal_month INT NOT NULL,                      -- 거래 월
+                          deal_year INT NOT NULL,                       -- 거래 연도
+                          deposit varchar(50) NOT NULL,                      -- 보증금
+                          exclu_use_area DECIMAL(10, 2) NOT NULL,       -- 전용 면적
+                          floor INT NOT NULL,                           -- 층수
+                          jibun VARCHAR(255),                           -- 지번
+                          monthly_rent BIGINT NOT NULL,                 -- 월세
+                          pre_deposit BIGINT,                           -- 이전 보증금
+                          pre_monthly_rent BIGINT,                      -- 이전 월세
+                          sgg_code VARCHAR(10) NOT NULL,               -- 시군구 코드
+                          umd_name VARCHAR(255) NOT NULL,              -- 읍면동명
+                          use_rr_right VARCHAR(255),                   -- 사용 권리
+                          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 생성 일시
+                          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- 갱신 일시
+);
+
+-- 법정동
 CREATE TABLE home (
                       id BIGINT AUTO_INCREMENT PRIMARY KEY,
                       law_dong_name VARCHAR(255) NOT NULL, -- 법정동명
