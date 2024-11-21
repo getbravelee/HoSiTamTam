@@ -1,4 +1,4 @@
-package com.suleekyuri.hositamtam.aptTrade;
+package com.suleekyuri.hositamtam.dong;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,7 +14,9 @@ import lombok.NoArgsConstructor;
 public class Data {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id;            // 고유 ID
 
-    private
+    private String lawDongName; // 법정동명
+    private String status;      // 폐지여부
+    private long lawDongCode;   // 법정동코드
 }
