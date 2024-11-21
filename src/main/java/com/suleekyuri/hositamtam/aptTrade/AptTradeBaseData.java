@@ -70,7 +70,6 @@ public class AptTradeBaseData {
         Collections.sort(lawDongCode);
         return lawDongCode;
     }
-    List<Integer> lawDongCode = new ArrayList<>();
 
     private List<Integer> monthList(int startMonth, int endMonth) {
         int current = startMonth;

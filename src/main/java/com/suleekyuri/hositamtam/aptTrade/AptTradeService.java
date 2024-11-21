@@ -95,7 +95,7 @@ public class AptTradeService {
         trade.setAptName(item.getAptNm());
         trade.setBuildYear(item.getBuildYear());
         trade.setBuyerType(item.getBuyerGbn());
-        trade.setDealAmount(Long.parseLong(item.getDealAmount().replace(",", "")));
+        trade.setDealAmount(item.getDealAmount());
         trade.setDealYear(item.getDealYear());
         trade.setDealMonth(item.getDealMonth());
         trade.setDealDay(item.getDealDay());

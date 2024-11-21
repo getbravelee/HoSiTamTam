@@ -20,7 +20,7 @@ public class AptTradeData {
     private String aptName;
     private Integer buildYear;
     private String buyerType;
-    private Long dealAmount;
+    private String dealAmount;
     private Integer dealYear;
     private Integer dealMonth;
     private Integer dealDay;
