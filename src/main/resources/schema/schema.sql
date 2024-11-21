@@ -16,3 +16,10 @@ CREATE TABLE apt_trade (
                            umd_name VARCHAR(50),                   -- 법정동명
                            estate_agent_address VARCHAR(300)       -- 중개사 소재지
 );
+
+CREATE TABLE home (
+                      id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                      law_dong_name VARCHAR(255) NOT NULL, -- 법정동명
+                      status VARCHAR(50) NOT NULL,         -- 폐지여부
+                      law_dong_code BIGINT NOT NULL        -- 법정동코드
+);
