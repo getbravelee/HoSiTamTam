@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.suleekyuri.hositamtam.mapper.UserMapper">
+<mapper namespace="com.suleekyuri.hositamtam.user.mapper.UserMapper">
 
     <!-- 사용자명으로 사용자 조회 -->
     <select id="findByUsername" resultType="com.suleekyuri.hositamtam.user.User">
@@ -19,4 +19,12 @@
         VALUES (#{userLoginId}, #{userLoginPassword}, #{userNickname}, #{userEmail})
     </insert>
 
+    <!--  아이디 중복 체크  -->
+    <select id="existsByUserLoginId" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM users
+            WHERE user_login_id = #{userLoginId}
+        )
+    </select>
 </mapper>

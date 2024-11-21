@@ -2,7 +2,7 @@ package com.suleekyuri.hositamtam.user.service;
 
 import com.suleekyuri.hositamtam.auth.dto.LoginDto;
 import com.suleekyuri.hositamtam.jwt.JwtProvider;
-import com.suleekyuri.hositamtam.mapper.UserMapper;
+import com.suleekyuri.hositamtam.user.mapper.UserMapper;
 import com.suleekyuri.hositamtam.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -79,4 +79,8 @@ public class UserServiceImpl implements UserService {
         // JWT 토큰 생성
         return jwtProvider.create(user);
     }
+
+    @Override
+    public boolean isUserLoginIdAvailable(String userLoginId) {
+        return !userMapper.existsByUserLoginId(userLoginId);    }
 }
