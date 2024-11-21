@@ -3,6 +3,7 @@ import MainView from "@/views/MainView.vue";
 import MapView from "@/views/MapView.vue";
 import NoticeView from "@/views/NoticeView.vue";
 import SearchView from "@/views/SearchView.vue";
+import SavedView from "@/views/SavedView.vue";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -26,6 +27,11 @@ const router = createRouter({
             path: "/search",
             name: "search",
             component: SearchView,
+        },
+        {
+            path: "/saved",
+            name: "saved",
+            component: SavedView,
         }
     ],
 });

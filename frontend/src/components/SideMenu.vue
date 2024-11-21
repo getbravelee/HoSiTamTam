@@ -13,10 +13,12 @@
           <span>Map</span>
         </li>
       </RouterLink>
-      <li>
-        <font-awesome-icon :icon="['fas', 'bookmark']" size="2xl"/>
-        <span>Saved</span>
-      </li>
+      <RouterLink :to="{ name: 'saved' }" class="no-decoration">
+        <li>
+          <font-awesome-icon :icon="['fas', 'bookmark']" size="2xl"/>
+          <span>Saved</span>
+        </li>
+      </RouterLink>
       <li @click="toggleModal">
         <font-awesome-icon :icon="['fas', 'user']" size="2xl"/>
         <span>MyPage</span>
