@@ -1,9 +1,9 @@
-package com.suleekyuri.hositamtam.region.dto;
+package com.suleekyuri.hositamtam.apt.dto;
 import lombok.Getter;
 
 @Getter
 public class AptListDto {
-    private int aptId;
+    private int id;
     private String aptName;
     private String aptTradeType;
     private int aptMaxSalesPrice;

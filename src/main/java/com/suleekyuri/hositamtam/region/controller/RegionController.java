@@ -1,7 +1,7 @@
 package com.suleekyuri.hositamtam.region.controller;
 
-import com.suleekyuri.hositamtam.apt.dto.AptDto;
 import com.suleekyuri.hositamtam.apt.service.AptService;
+import com.suleekyuri.hositamtam.region.dto.RegionDto;
 import com.suleekyuri.hositamtam.region.service.RegionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,15 +15,15 @@ import java.util.List;
 @RequestMapping("/region")
 public class RegionController {
 
-    private final AptService aptService;
+    private final RegionService regionService;
 
     @Autowired
-    public RegionController(AptService aptService) {
-        this.aptService = aptService;
+    public RegionController(RegionService regionService) {
+        this.regionService = regionService;
     }
 
-    @GetMapping("/{dongCode}")
-    public List<AptDto> getAptsByRegion(@PathVariable String dongCode) {
-        return aptService.getAptsByRegion(dongCode);
+    @GetMapping("/{dongName}")
+    public List<RegionDto> getAptsByRegion(@PathVariable String dongName) {
+        return regionService.getAptsByRegion(dongName);
     }
 }
