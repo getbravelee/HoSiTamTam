@@ -12,7 +12,7 @@
             @compositionstart="onCompositionStart"
             @keyup.enter="handleEnter"
         />
-        <font-awesome-icon :icon="['fas', 'magnifying-glass']" class="search-icon"/>
+        <font-awesome-icon :icon="['fas', 'magnifying-glass']" class="search-icon" @click="handleEnter"/>
       </div>
     </div>
     <!-- 결과 목록 -->
@@ -50,8 +50,9 @@ export default {
     const debounceTimer = ref(null);
     const isClickingSearchResult = ref(false);
 
-
     const onSearch = () => {
+      results.value = [];
+
       const allLocations = ["서울", "부산", "대구", "인천", "광주", "대전", "울산"];
       results.value = allLocations.filter((location) =>
           location.includes(query.value)
@@ -120,6 +121,15 @@ export default {
     const selectSuggestion = (result) => {
       query.value = result;
       // query.value = result.locationName;
+      console.log(result);
+      const data = results.value.map(item => item);
+      router.push({
+        name: 'aptList',
+        params: { region: result },
+        query: { query: result, results: data },
+        state: { results: data }
+      });
+
       results.value = [];
       showResults.value = false;
       isInput.value = false;
@@ -128,8 +138,8 @@ export default {
     const handleEnter = () => {
       const data = results.value.map(item => item);
       router.push({
-        name: 'search',
-        query: { query: query.value, results: results.value },  // query는 URL 쿼리로 전달
+        name: 'regionList',
+        query: { query: query.value },  // query는 URL 쿼리로 전달
         state: { results: data },  // results는 state로 전달
       });
 
