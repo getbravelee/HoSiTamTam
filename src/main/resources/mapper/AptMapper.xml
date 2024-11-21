@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.suleekyuri.hositamtam.apt.mapper.AptMapper">
 
-    <select id="getAptsByRegion" parameterType="com.suleekyuri.hositamtam.apt.dto.AptDto">
+    <select id="getAptsByRegion" parameterType="com.suleekyuri.hositamtam.apt.dto.AptListDto">
         select
             dong_code AS dongCode,
             dong_name AS dongName,

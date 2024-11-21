@@ -35,25 +35,6 @@ def getAptInfoData(danjiId):
         data = req.json()
         a = data["pageProps"]["SSRData"]["danjis"]
         filtered_data = {k: v for k, v in a.items() if k not in exclude_columns}
-
-        room_types = data["pageProps"]["SSRData"]["danjisRoomTypes"]["room_types"]
-        school_zones = data["pageProps"]["SSRData"]["schoolZones"]
-
-        elementary = school_zones["elementary"]
-        middle = school_zones["middle"]
-        high = school_zones["high"]
-
-        additional_data = {
-            "room_types": room_types,
-            "elementary_zone_name": elementary["zoneName"],
-            "elementary_zone_code": elementary["zoneCode"],
-            "middle_zone_name": middle["zoneName"],
-            "middle_zone_code": middle["zoneCode"],
-            "high_zone_name": high["zoneName"],
-            "high_zone_code": high["zoneCode"],
-        }
-
-        filtered_data.update(additional_data)
         return filtered_data
     return None
 
