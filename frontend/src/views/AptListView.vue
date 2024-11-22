@@ -3,7 +3,7 @@ import {reactive, ref, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import SearchBar from "@/components/SearchBar.vue";
 import ListItem from "@/components/ListItem.vue";
-import { MultiSlider } from 'vue3-multi-slider';
+import {MultiSlider} from 'vue3-multi-slider';
 
 const route = useRoute();
 const router = useRouter();
@@ -22,7 +22,12 @@ const updateResults = (newResults) => {
 };
 
 const goToApartmentDetail = (apartmentId) => {
-  router.push({ name: 'aptDetail', params: { region, apartmentId } });
+  const data = results.value.map(item => item);
+  router.push({
+    name: 'aptDetail',
+    params: {query, region, aptId: apartmentId},
+    state: {aptName: '명지삼정그린코아', results: data}
+  });
 };
 
 const price = reactive({
@@ -79,7 +84,9 @@ console.log(price["Category 1"].value);
         <div class="price-filter">
           <div class="slider-info">
             <div class="slider-label">가격</div>
-            <div class="slider-values">{{ price["Category 1"].value }} ~ {{ price["Category 2"].value + price["Category 1"].value }}억</div>
+            <div class="slider-values">{{ price["Category 1"].value }} ~
+              {{ price["Category 2"].value + price["Category 1"].value }}억
+            </div>
           </div>
           <MultiSlider
               v-model="price"
@@ -88,13 +95,15 @@ console.log(price["Category 1"].value);
               :step="1"
               unit="억"
               :show-inputs="false"
-              :ticks="[0, 5, 10, 20, 30, 40]"
+              :ticks="[0, 10, 20, 30, 40]"
           ></MultiSlider>
         </div>
         <div class="area-filter">
           <div class="slider-info">
             <div class="slider-label">평형</div>
-            <div class="slider-values">{{ area["Category 1"].value }} ~ {{ area["Category 2"].value + area["Category 1"].value }}평</div>
+            <div class="slider-values">{{ area["Category 1"].value }} ~
+              {{ area["Category 2"].value + area["Category 1"].value }}평
+            </div>
           </div>
           <MultiSlider
               v-model="area"
@@ -106,7 +115,7 @@ console.log(price["Category 1"].value);
               :ticks="[0, 20, 40, 60, 80]"
           ></MultiSlider>
         </div>
-        <hr />
+        <hr/>
       </div>
 
       <div class="result-list">
@@ -176,11 +185,12 @@ input[type=radio] {
 .option:checked + .tab {
   color: #fff;
   background-color: #4E5E77;
+  box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 .price-filter, .area-filter {
   text-align: left;
-  display: block; /* 부모 컨테이너를 블록 요소로 변경 */
+  display: block;
   margin: 15px 0;
 }
 

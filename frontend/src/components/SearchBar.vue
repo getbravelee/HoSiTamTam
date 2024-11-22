@@ -126,7 +126,7 @@ export default {
       router.push({
         name: 'aptList',
         params: { region: result },
-        query: { query: result, results: data },
+        query: { query: result },
         state: { results: data }
       });
 

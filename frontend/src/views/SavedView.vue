@@ -87,5 +87,6 @@ input[type=radio] {
 .option:checked + .tab {
   color: #fff;
   background-color: #4E5E77;
+  box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 </style>
