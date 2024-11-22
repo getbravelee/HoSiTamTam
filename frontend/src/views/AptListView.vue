@@ -4,6 +4,7 @@ import {useRoute, useRouter} from "vue-router";
 import SearchBar from "@/components/SearchBar.vue";
 import ListItem from "@/components/ListItem.vue";
 import {MultiSlider} from 'vue3-multi-slider';
+import {usePlaceStore} from "@/stores/place";
 
 const route = useRoute();
 const router = useRouter();
@@ -19,15 +20,6 @@ watch(() => route.query.query, (newQuery) => {
 
 const updateResults = (newResults) => {
   results.value = newResults;
-};
-
-const goToApartmentDetail = (apartmentId) => {
-  const data = results.value.map(item => item);
-  router.push({
-    name: 'aptDetail',
-    params: {query, region, aptId: apartmentId},
-    state: {aptName: '명지삼정그린코아', results: data}
-  });
 };
 
 const price = reactive({
@@ -56,8 +48,54 @@ const area = reactive({
   },
 })
 
+// 상권 정보(카테고리) 검색에 필요한 것
+const placesStore = usePlaceStore();
+const categories = ref([
+  {id: 'MT1', name: '마트', icon: 'mart'},
+  {id: 'PM9', name: '약국', icon: 'pharmacy'},
+  {id: 'SW8', name: '지하철', icon: 'subway'},
+  {id: 'HP8', name: '병원', icon: 'hospital'},
+  {id: 'PS3', name: '유치원', icon: 'store'},
+  {id: 'SC4', name: '학교', icon: 'school'},
+]);
 
-console.log(price["Category 1"].value);
+const searchPlaces = (category, lat, lng) => {
+  const ps = new window.kakao.maps.services.Places();
+  const location = new window.kakao.maps.LatLng(lat, lng);
+  ps.categorySearch(category, placesSearchCB, {
+    location: location, // 경도, 위도를 기준으로 검색
+    radius: 5000, // 검색 범위 (5km)
+  });
+};
+
+const placesSearchCB = (data, status) => {
+  if (status === window.kakao.maps.services.Status.OK) {
+    placesStore.addPlaceData(data);  // Pinia에 상권 정보 저장
+  } else if (status === window.kakao.maps.services.Status.ZERO_RESULT) {
+    // 검색 결과가 없는 경우 처리
+  } else if (status === window.kakao.maps.services.Status.ERROR) {
+    // 에러 처리
+  }
+};
+
+
+const goToApartmentDetail = async (apartmentId, lat, lng) => {
+  // 카테고리 별 정보 가져오기
+  placesStore.resetPlaceData();
+
+  for (let category of categories.value) {
+    await searchPlaces(category.id, lat, lng);
+  }
+
+  console.log(placesStore.placesData);
+
+  const data = results.value.map(item => item);
+  router.push({
+    name: 'aptDetail',
+    params: {query, region, aptId: apartmentId},
+    state: {aptName: '명지삼정그린코아', results: data}
+  });
+};
 </script>
 
 <template>
@@ -119,7 +157,7 @@ console.log(price["Category 1"].value);
       </div>
 
       <div class="result-list">
-        <ListItem @click="goToApartmentDetail(1)"/>
+        <ListItem @click="goToApartmentDetail(1, 36.6022672822298, 126.648860632918)"/>
         <ListItem @click="goToApartmentDetail(2)"/>
         <ListItem @click="goToApartmentDetail(3)"/>
       </div>
