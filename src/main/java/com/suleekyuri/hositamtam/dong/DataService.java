@@ -31,12 +31,13 @@ public class DataService {
             String perPage = "1000";
             String returnType = "XML";
             String serviceKey = apiKey;
+            System.out.println(apiKey);
 
             StringBuilder urlBuilder = new StringBuilder(apiUrl);
             urlBuilder.append("?" + URLEncoder.encode("page", "UTF-8") + "=" + page);
             urlBuilder.append("&" + URLEncoder.encode("perPage", "UTF-8") + "=" + URLEncoder.encode(perPage, "UTF-8"));
             urlBuilder.append("&" + URLEncoder.encode("returnType", "UTF-8") + "=" + URLEncoder.encode(returnType, "UTF-8"));
-            urlBuilder.append("&" + URLEncoder.encode("serviceKey", "UTF-8") + "=" + URLEncoder.encode(serviceKey, "UTF-8"));
+            urlBuilder.append("&").append(URLEncoder.encode("serviceKey", "UTF-8")).append("=").append(serviceKey);
 
             URL url = new URL(urlBuilder.toString());
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
