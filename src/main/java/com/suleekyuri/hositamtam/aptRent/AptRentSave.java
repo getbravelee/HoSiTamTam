@@ -21,6 +21,9 @@ public class AptRentSave {
     public static class Body {
         @XmlElement(name = "items")
         private AptRentSave.Items items;
+
+        @XmlElement(name = "totalCount", nillable = true)
+        private Integer totalCount;
     }
 
     @Getter
