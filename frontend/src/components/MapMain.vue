@@ -37,12 +37,12 @@ const markers = ref([]);
 
 // 카테고리 정보 (아이콘, 이름 등)
 const categories = ref([
-  {id: 'BK9', name: '은행', icon: 'bank'},
   {id: 'MT1', name: '마트', icon: 'mart'},
   {id: 'PM9', name: '약국', icon: 'pharmacy'},
-  {id: 'OL7', name: '주유소', icon: 'oil'},
-  {id: 'CE7', name: '카페', icon: 'cafe'},
-  {id: 'CS2', name: '편의점', icon: 'store'}
+  {id: 'SW8', name: '지하철', icon: 'subway'},
+  {id: 'HP8', name: '병원', icon: 'hospital'},
+  {id: 'PS3', name: '유치원', icon: 'store'},
+  {id: 'SC4', name: '학교', icon: 'school'},
 ]);
 
 const currCategory = ref(''); // 현재 선택된 카테고리
