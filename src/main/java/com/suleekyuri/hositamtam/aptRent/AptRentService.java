@@ -48,12 +48,18 @@ public class AptRentService {
 
                     processApiResponse(apiResponse);
 
+                    // totalCount와 totalPages 계산
                     int totalCount = apiResponse.getBody().getTotalCount();
-                    int numOfRows = 1000; // 한 페이지당 1000개
-                    int totalPages = (int) Math.ceil((double) totalCount / numOfRows);
+                    int numOfRows = 1000;
+                    int totalPages = (int) Math.ceil((double) totalCount / numOfRows); // 올림 처리
 
+                    log.info("LAWD_CD: {}, DEAL_YMD: {}, CurrentPage: {}, TotalPages: {}", lawdCd, month, currentPage, totalPages);
+
+                    // 다음 페이지 여부 판단
                     currentPage++;
-                    hasNextPage = currentPage <= totalPages;
+
+                    // **다음 페이지가 없거나 데이터가 비어있으면 종료**
+                    hasNextPage = currentPage <= totalPages && apiResponse.getBody().getItems() != null && !apiResponse.getBody().getItems().getItemList().isEmpty();
                 }
             }
         }

@@ -94,11 +94,11 @@ UPDATE apt_trade at
     law_dong_code_prefix,
     old_law_dong_name
     FROM old_sgg
-    where law_dong_code_prefix between '30000' and '40000'
+    where law_dong_code_prefix between '10000' and '60000'
     ) o
 ON at.sgg_code = o.law_dong_code_prefix
     SET at.sgg_name = o.old_law_dong_name
-WHERE at.sgg_code BETWEEN '30000' AND '40000'; -- 범위 제한
+WHERE at.sgg_code BETWEEN '10000' AND '60000'; -- 범위 제한
 
 -- 임시 테이블 사용: 필요한 데이터를 한 번에 추출하여 임시 테이블에 저장한 후 JOIN 시 사용하면, 반복적으로 SELECT 쿼리를 실행하지 않아도 된다.
 
