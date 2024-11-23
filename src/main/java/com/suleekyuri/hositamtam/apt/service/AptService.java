@@ -1,8 +1,7 @@
 package com.suleekyuri.hositamtam.apt.service;
 
-
-import java.util.List;
+import com.suleekyuri.hositamtam.apt.dto.AptDetailDto;
 
 public interface AptService {
-    List<AptListDto> getAptsByRegion(String dongCode);
+    AptDetailDto getAptDetail(String aptId);
 }

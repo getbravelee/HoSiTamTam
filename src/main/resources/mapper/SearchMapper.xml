@@ -4,6 +4,15 @@
 
 <mapper namespace="com.suleekyuri.hositamtam.search.mapper.SearchMapper">
     <select id="findByLocationContaining" resultType="com.suleekyuri.hositamtam.search.dto.SuggestionDto">
-        SELECT id, location_name as locationName FROM location WHERE location_name LIKE CONCAT('%', #{keyword}, '%')
+        SELECT
+--             bcode, trade_data의 deal_amount(null 일 수도 있음), 거래날짜
+            id,
+            name AS locationName
+        FROM
+            apartment
+        WHERE
+            local1 LIKE CONCAT('%', #{keyword}, '%')
+           OR local2 LIKE CONCAT('%', #{keyword}, '%')
+           OR local3 LIKE CONCAT('%', #{keyword}, '%')
     </select>
 </mapper>
