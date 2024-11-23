@@ -27,7 +27,7 @@ public class SearchController {
         try {
             List<SuggestionDto> suggestionDto = searchService.getSuggestions(keyword);
             for (SuggestionDto s : suggestionDto) {
-                System.out.println(s.getLocationName());
+                System.out.println(s.getDongName());
             }
             return suggestionDto;
         } catch (Exception e) {

@@ -9,14 +9,14 @@
     <table v-if="suggestions.length" border="1">
       <thead>
       <tr>
-        <th>ID</th>
+        <th>bcode</th>
         <th>제안 이름</th>
       </tr>
       </thead>
       <tbody>
-      <tr v-for="suggestion in suggestions" :key="suggestion.id" @click="selectSuggestion(suggestion)">
-        <td>{{ suggestion.id }}</td>
-        <td>{{ suggestion.locationName }}</td>
+      <tr v-for="suggestion in suggestions" :key="suggestion.bcode" @click="selectSuggestion(suggestion)">
+        <td>{{ suggestion.bcode }}</td>
+        <td>{{ suggestion.dongName }}</td>
       </tr>
       </tbody>
     </table>
@@ -48,7 +48,7 @@ export default {
       }
     },
     selectSuggestion(suggestion) {
-      this.query = suggestion.locationName; // 선택한 제안으로 검색어 업데이트
+      this.query = suggestion.dongName; // 선택한 제안으로 검색어 업데이트
       this.suggestions = []; // 제안 목록 비우기
     }
   }
