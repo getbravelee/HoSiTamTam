@@ -189,7 +189,7 @@ const goToApartmentDetail = async (apartmentId, lat, lng) => {
   width: 375px;
   z-index: 10;
   background-color: #EBF2FC;
-  height: calc(100vh - 65px);
+  height: calc(100vh - 118px);
   overflow-y: auto;
 }
 

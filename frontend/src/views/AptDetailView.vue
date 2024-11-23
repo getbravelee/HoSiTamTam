@@ -80,22 +80,22 @@ const tabs = ['초등학교', '중학교', '고등학교'];
 const activeTab = ref('초등학교');
 
 const elementarySchools = ref([
-  { name: '부민초등학교', type: '공립', distance: '486m', time: '7분' },
+  {name: '부민초등학교', type: '공립', distance: '486m', time: '7분'},
 ]);
 
 const middleSchools = ref([
-  { name: '명호중학교', type:'공립', distance: '3km', rank: '상위 16%', specialAdmissions: '특목고 17명/자사고 5명' },
-  { name: '경일중학교', type:'사립', distance: '4km', rank: '상위 28%', specialAdmissions: '특목고 14명' },
-  { name: '명지중학교', type:'공립', distance: '3.5km', rank: '상위 48%', specialAdmissions: '특목고 4명/자사고 2명' },
-  { name: '명지중학교', type:'공립', distance: '3.5km', rank: '상위 48%', specialAdmissions: '특목고 4명/자사고 2명' },
+  {name: '명호중학교', type: '공립', distance: '3km', rank: '상위 16%', specialAdmissions: '특목고 17명/자사고 5명'},
+  {name: '경일중학교', type: '사립', distance: '4km', rank: '상위 28%', specialAdmissions: '특목고 14명'},
+  {name: '명지중학교', type: '공립', distance: '3.5km', rank: '상위 48%', specialAdmissions: '특목고 4명/자사고 2명'},
+  {name: '명지중학교', type: '공립', distance: '3.5km', rank: '상위 48%', specialAdmissions: '특목고 4명/자사고 2명'},
 ]);
 
 const highSchools = ref([
-  { name: '부경고등학교', type:'사립', distance: '822m', studentsPerClass: '19.6명' },
-  { name: '혜광고등학교',  type:'공립', distance: '834m', studentsPerClass: '16.6명' },
-  { name: '부산서여자고등학교',  type:'공립', distance: '863m', studentsPerClass: '20.2명' },
-  { name: '부산서여자고등학교',  type:'공립', distance: '863m', studentsPerClass: '20.2명' },
-  { name: '부산서여자고등학교',  type:'공립', distance: '863m', studentsPerClass: '20.2명' },
+  {name: '부경고등학교', type: '사립', distance: '822m', studentsPerClass: '19.6명'},
+  {name: '혜광고등학교', type: '공립', distance: '834m', studentsPerClass: '16.6명'},
+  {name: '부산서여자고등학교', type: '공립', distance: '863m', studentsPerClass: '20.2명'},
+  {name: '부산서여자고등학교', type: '공립', distance: '863m', studentsPerClass: '20.2명'},
+  {name: '부산서여자고등학교', type: '공립', distance: '863m', studentsPerClass: '20.2명'},
 ]);
 
 const showMoreMiddleSchools = ref(false);
@@ -114,6 +114,30 @@ const changeTab = (tab) => {
   showMoreMiddleSchools.value = false;
   showMoreHighSchools.value = false;
 };
+
+// 댓글 관련
+const comments = ref([
+  {
+    username: '랑이',
+    date: '2024.11.02',
+    content: "강남 한복판에 위치해 있어서 교통이 매우 편리합니다. 주변에 마트와 카페도 많고, 아파트 내부는 매우 깨끗하고 관리가 잘 되어 있습니다. 특히 헬스장과 수영장이 마음에 듭니다.",
+    isHelpChecked: false,
+  },
+  {
+    username: '랑이',
+    date: '2024.11.02',
+    content:
+        "가격에 비해서 괜찮은 아파트입니다. 내부 시설은 잘 갖춰져 있으나, 가끔 엘리베이터가 고장 나는 점이 불편하네요. 위치는 정말 좋습니다. 강남에서 살아본 적이 없어 이 곳이 정말 마음에 듭니다.",
+    isHelpChecked: false,
+  },
+  {
+    username: '랑이',
+    date: '2024.11.02',
+    content:
+        "이 아파트에서 살게 되어 정말 행복합니다. 보안이 철저하고, 대로변과 가까워서 상업시설이 풍부해서 정말 편리해요. 바닥과 벽이 두꺼워 소음 차단도 잘 되어 있어서 이웃과의 관계도 좋습니다.",
+    isHelpChecked: false,
+  },
+]);
 </script>
 
 <template>
@@ -189,7 +213,7 @@ const changeTab = (tab) => {
           </table>
           <button class="more-btn">
             더보기
-            <font-awesome-icon :icon="['fas', 'angle-down']" />
+            <font-awesome-icon :icon="['fas', 'angle-down']"/>
           </button>
         </div>
         <!-- 아파트 정보 -->
@@ -246,7 +270,7 @@ const changeTab = (tab) => {
           </div>
           <button class="more-btn">
             더보기
-            <font-awesome-icon :icon="['fas', 'angle-down']" />
+            <font-awesome-icon :icon="['fas', 'angle-down']"/>
           </button>
         </div>
         <!-- 학군 정보 -->
@@ -281,7 +305,8 @@ const changeTab = (tab) => {
                 <div class="sort-by">특목/자사고 진학</div>
                 <div class="zone-name">5학교군</div>
               </div>
-              <div v-for="(school) in (showMoreMiddleSchools ? middleSchools : middleSchools.slice(0, 3))" :key="school.name" class="school-card">
+              <div v-for="(school) in (showMoreMiddleSchools ? middleSchools : middleSchools.slice(0, 3))"
+                   :key="school.name" class="school-card">
                 <div>
                   <span>{{ school.name }}</span>
                   <span>{{ school.type }}/{{ school.distance }}</span>
@@ -293,7 +318,7 @@ const changeTab = (tab) => {
               </div>
               <button v-if="middleSchools.length > 3" class="more-btn" @click="toggleMoreMiddleSchools">
                 {{ showMoreMiddleSchools ? '간략히 보기' : '더보기' }}
-                <font-awesome-icon :icon="showMoreMiddleSchools ? ['fas', 'angle-up'] : ['fas', 'angle-down']" />
+                <font-awesome-icon :icon="showMoreMiddleSchools ? ['fas', 'angle-up'] : ['fas', 'angle-down']"/>
               </button>
             </template>
             <template v-else-if="activeTab === '고등학교'">
@@ -301,7 +326,8 @@ const changeTab = (tab) => {
                 <div class="sort-by">학급당 학생 수</div>
                 <div class="zone-name">남부고등학군</div>
               </div>
-              <div v-for="(school) in (showMoreHighSchools ? highSchools : highSchools.slice(0, 3))" :key="school.name" class="school-card">
+              <div v-for="(school) in (showMoreHighSchools ? highSchools : highSchools.slice(0, 3))" :key="school.name"
+                   class="school-card">
                 <div>
                   <span>{{ school.name }}</span>
                   <span>{{ school.type }}/{{ school.distance }}</span>
@@ -310,15 +336,41 @@ const changeTab = (tab) => {
               </div>
               <button v-if="highSchools.length > 3" class="more-btn" @click="toggleMoreHighSchools">
                 {{ showMoreHighSchools ? '간략히 보기' : '더보기' }}
-                <font-awesome-icon :icon="showMoreHighSchools ? ['fas', 'angle-up'] : ['fas', 'angle-down']" />
+                <font-awesome-icon :icon="showMoreHighSchools ? ['fas', 'angle-up'] : ['fas', 'angle-down']"/>
               </button>
             </template>
           </div>
         </div>
         <!-- 아파트 이야기 -->
-        <div class="section" ref="aptReviewSection" style="height: 500px;">
+        <div class="section" ref="aptReviewSection">
           <div class="info-title">💬아파트 이야기</div>
+          <div class="comments">
+            <div v-for="(comment, index) in comments" :key="index" class="comment-box">
+              <div class="comment-header">
+                <font-awesome-icon :icon="['fas', 'circle-user']" class="icon" size="lg" style="color: #a6a6a6;" />
+                <div class="writer-info">
+                  <div class="username">{{ comment.username }}</div>
+                  <div class="date">{{ comment.date }}</div>
+                </div>
+                <input type="checkbox" id="help-checkbox" class="help-checkbox">
+                <input type="checkbox" v-model="comment.isHelpChecked" :id="'help-checkbox-' + index" class="help-checkbox">
+                <label :for="'help-checkbox-' + index" class="help-label">
+                  <font-awesome-icon :icon="['far', 'thumbs-up']" class="icon"/>
+                  <span>도움돼요</span>
+                </label>
+              </div>
+              <div class="comment-content">
+                {{ comment.content }}
+              </div>
+              <div class="comment-footer">
+                <div class="help-count">0명에게 도움이 됐어요</div>
+              </div>
+            </div>
+          </div>
         </div>
+        <button class="add-comment-btn">
+          이야기 추가하기
+        </button>
       </div>
     </div>
   </div>
@@ -347,7 +399,7 @@ const changeTab = (tab) => {
   width: 375px;
   z-index: 10;
   background-color: #EBF2FC;
-  height: calc(100vh - 65px);
+  height: calc(100vh);
 }
 
 /* 상단 nav 버튼 style */
@@ -364,8 +416,8 @@ input[type=radio] {
   -ms-overflow-style: none;
 }
 
-.focus-option::-webkit-scrollbar{
-  display:none;
+.focus-option::-webkit-scrollbar {
+  display: none;
 }
 
 .tab {
@@ -393,19 +445,23 @@ input[type=radio] {
 
 /* 정보 공통 style */
 .content {
-  height: calc(100vh - 65px);
+  height: calc(100vh - 164px);
   overflow-y: auto;
   -ms-overflow-style: none;
 }
 
-.content::-webkit-scrollbar{
-  display:none;
+.content::-webkit-scrollbar {
+  display: none;
 }
 
 .section {
   padding: 13px 10px;
   margin-bottom: 10px;
   background-color: #FFFFFF;
+}
+
+.content > .section:nth-child(5) {
+  margin-bottom: 0;
 }
 
 .info-title {
@@ -580,7 +636,7 @@ input[type=radio] {
 }
 
 .school-card > div:first-child > span:first-child,
-.school-card > div:nth-child(2) > span:first-child{
+.school-card > div:nth-child(2) > span:first-child {
   font-size: 16px;
   color: #333333;
 }
@@ -589,5 +645,86 @@ input[type=radio] {
 .school-card > div:nth-child(2) > span:nth-child(2) {
   font-size: 13px;
   color: #6e6e6e;
+}
+
+/* 아파트 댓글 style*/
+.comment-box {
+  border-radius: 15px;
+  padding: 12px 10px;
+  margin-bottom: 10px;
+  background-color: #F3F8FF;
+}
+
+.comment-header {
+  display: flex;
+  align-items: center;
+}
+
+.icon {
+  text-align: center;
+  margin-right: 5px;
+}
+
+.writer-info {
+  flex: 1;
+  text-align: left;
+  line-height: 12px;
+}
+
+.username {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.date {
+  font-size: 10px;
+  color: #a1a1a1;
+}
+
+.help-checkbox {
+  display: none;
+}
+
+.help-label {
+  cursor: pointer;
+  font-size: 14px;
+  color: #757575;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s ease;
+}
+
+.help-label:hover {
+  color: #608fd3;
+}
+
+.help-checkbox:checked + .help-label {
+  color: #007bff;
+}
+
+.comment-content {
+  text-align: left;
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  margin: 8px 0;
+}
+
+.comment-footer {
+  font-size: 12px;
+  color: #AFAFAF;
+  text-align: right;
+}
+
+.add-comment-btn {
+  all: unset;
+  width: 100%;
+  padding: 12px 0;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: #293A67;
+  color: white;
+  cursor: pointer;
 }
 </style>
