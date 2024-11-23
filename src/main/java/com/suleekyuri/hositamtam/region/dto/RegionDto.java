@@ -6,4 +6,5 @@ import lombok.Getter;
 public class RegionDto {
     private String id;
     private String aptName;
+
 }
