@@ -72,6 +72,30 @@ const moveSchoolInfo = () => {
 const moveAptReview = () => {
   aptReviewSection.value.scrollIntoView({behavior: "smooth"});
 }
+
+
+const tabs = ['초등학교', '중학교', '고등학교'];
+const activeTab = ref('초등학교');
+
+const elementarySchools = ref([
+  { name: '부민초등학교', distance: '486m', time: '7분' },
+]);
+
+const middleSchools = ref([
+  { name: '명호중학교', rank: '상위 16%', specialAdmissions: '특목고 17명/자사고 5명' },
+  { name: '경일중학교', rank: '상위 28%', specialAdmissions: '특목고 14명' },
+  { name: '명지중학교', rank: '상위 48%', specialAdmissions: '특목고 4명/자사고 2명' },
+]);
+
+const highSchools = ref([
+  { name: '부경고등학교', distance: '822m', studentsPerClass: '19.6명' },
+  { name: '혜광고등학교', distance: '834m', studentsPerClass: '16.6명' },
+  { name: '부산서여자고등학교', distance: '863m', studentsPerClass: '20.2명' },
+]);
+
+const changeTab = (tab) => {
+  activeTab.value = tab;
+};
 </script>
 
 <template>
@@ -208,8 +232,40 @@ const moveAptReview = () => {
           </button>
         </div>
         <!-- 학군 정보 -->
-        <div class="section" ref="schoolInfoSection" style="height: 400px;">
+        <div class="section" ref="schoolInfoSection">
           <div class="info-title">🏫학군 정보</div>
+          <div class="tab-buttons">
+            <button
+                v-for="(tab, index) in tabs"
+                :key="index"
+                :class="{ active: activeTab === tab }"
+                @click="changeTab(tab)"
+            >
+              {{ tab }}
+            </button>
+          </div>
+          <div class="school-data">
+            <template v-if="activeTab === '초등학교'">
+              <div v-for="school in elementarySchools" :key="school.name" class="school-card">
+                <p>{{ school.name }}</p>
+                <p>거리: {{ school.distance }} / {{ school.time }}</p>
+              </div>
+            </template>
+            <template v-else-if="activeTab === '중학교'">
+              <div v-for="school in middleSchools" :key="school.name" class="school-card">
+                <p>{{ school.name }}</p>
+                <p>상위: {{ school.rank }}</p>
+                <p>특목/자사고 진학: {{ school.specialAdmissions }}</p>
+              </div>
+            </template>
+            <template v-else-if="activeTab === '고등학교'">
+              <div v-for="school in highSchools" :key="school.name" class="school-card">
+                <p>{{ school.name }}</p>
+                <p>거리: {{ school.distance }}</p>
+                <p>학급당 학생 수: {{ school.studentsPerClass }}</p>
+              </div>
+            </template>
+          </div>
         </div>
         <!-- 아파트 이야기 -->
         <div class="section" ref="aptReviewSection" style="height: 500px;">
@@ -422,5 +478,55 @@ input[type=radio] {
 
 .more-btn:hover {
   color: #3e62c0;
+}
+
+
+.school-info {
+  border: 1px solid #ccc;
+  padding: 16px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.info-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.tab-buttons {
+  display: flex;
+  margin-bottom: 16px;
+}
+
+.tab-buttons button {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tab-buttons button.active {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.tab-buttons button:not(:last-child) {
+  margin-right: 8px;
+}
+
+.school-data {
+  display: flex;
+  flex-direction: column;
+}
+
+.school-card {
+  border: 1px solid #ddd;
+  padding: 12px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  background-color: #fff;
 }
 </style>
