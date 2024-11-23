@@ -1,5 +1,7 @@
 package com.suleekyuri.hositamtam.apt.service;
 
+import com.suleekyuri.hositamtam.apt.dto.AptDetailDto;
+import com.suleekyuri.hositamtam.apt.dto.AptListDto;
 import com.suleekyuri.hositamtam.apt.mapper.AptMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +19,7 @@ public class AptServiceImpl implements AptService {
     }
 
     @Override
-    public List<AptListDto> getAptsByRegion(String dongCode) {
-        return aptMapper.getAptsByRegion(dongCode);
+    public AptDetailDto getAptDetail(String aptId) {
+        return aptMapper.findAptDetail(aptId);
     }
 }

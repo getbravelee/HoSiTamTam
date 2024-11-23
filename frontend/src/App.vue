@@ -1,5 +1,6 @@
 <template>
   <SearchBar />
+  <AptDetail />
   <FilteringWord />
   <ChatBot/>
 </template>
@@ -8,11 +9,13 @@
 import SearchBar from "@/components/SearchBar.vue";
 import FilteringWord from "@/components/FilteringWord.vue";
 import ChatBot from "@/components/ChatBot.vue";
+import AptDetail from "@/components/AptDetail.vue";
 
 export default {
   name: 'App',
   components: {
     SearchBar,
+    AptDetail,
     FilteringWord,
     ChatBot
   }

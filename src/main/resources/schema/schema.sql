@@ -60,3 +60,21 @@ CREATE TABLE Apartment (
                            high_zone_name VARCHAR(255),
                            high_zone_code VARCHAR(20)
 );
+
+-- ??시 ??구 ??동 처럼 띄어 쓰기 2개로만 이루어진 local address 저
+CREATE TABLE localSigudong (
+                               id BIGINT AUTO_INCREMENT PRIMARY KEY, -- 고유 식별자
+                               law_dong_name VARCHAR(255) NOT NULL, -- 법정동명
+                               sigungu_name VARCHAR(255) NOT NULL, -- 시/군/구 이름
+                               region_name VARCHAR(255) NOT NULL -- 읍/면/동 이름
+);
+
+INSERT INTO localSigudong (law_dong_name, sigungu_name, region_name)
+SELECT
+    law_dong_name,
+    SUBSTRING_INDEX(SUBSTRING_INDEX(law_dong_name, ' ', 2), ' ', -1) AS sigungu_name, -- 시/군/구
+    SUBSTRING_INDEX(law_dong_name, ' ', -1) AS region_name -- 읍/면/동
+FROM home
+WHERE
+        status = '존재' -- 상태가 '존재'인 것만 추출
+  AND (LENGTH(law_dong_name) - LENGTH(REPLACE(law_dong_name, ' ', ''))) = 2; -- 띄어쓰기 2개

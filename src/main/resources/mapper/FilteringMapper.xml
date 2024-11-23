@@ -12,6 +12,4 @@
             (#{type} IS NULL OR type = #{type})
     </select>
 
-
-
 </mapper>
