@@ -139,3 +139,112 @@ SET old_address = CONCAT(
         COALESCE(umd_name, ''), ' ',
         COALESCE(jibun, '')
                   );
+
+-- 직방 크롤링 테이블에 매매, 전월세 정보 json으로 저장하기
+ALTER TABLE apartment
+    ADD COLUMN trade_data JSON,
+ADD COLUMN rent_data JSON;
+
+SELECT
+    ar.old_address,
+    JSON_ARRAYAGG(
+            JSON_OBJECT(
+                    'build_year', ar.build_year,
+                    'contract_term', ar.contract_term,
+                    'contract_type', ar.contract_type,
+                    'deal_day', ar.deal_day,
+                    'deal_month', ar.deal_month,
+                    'deal_year', ar.deal_year,
+                    'deposit', ar.deposit,
+                    'exclu_use_area', ar.exclu_use_area,
+                    'floor', ar.floor,
+                    'jibun', ar.jibun,
+                    'monthly_rent', ar.monthly_rent,
+                    'pre_deposit', ar.pre_deposit,
+                    'pre_monthly_rent', ar.pre_monthly_rent
+            )
+    ) AS rent_data
+FROM apt_rent ar
+GROUP BY ar.old_address;
+
+SELECT
+    at.old_address,
+    JSON_ARRAYAGG(
+            JSON_OBJECT(
+                    'build_year', at.build_year,
+                    'buyer_type', at.buyer_type,
+                    'deal_amount', at.deal_amount,
+                    'deal_year', at.deal_year,
+                    'deal_month', at.deal_month,
+                    'deal_day', at.deal_day,
+                    'dealing_type', at.dealing_type,
+                    'exclu_use_area', at.exclu_use_area,
+                    'floor', at.floor,
+                    'jibun', at.jibun,
+                    'land_leasehold_gbn', at.land_leasehold_gbn
+            )
+    ) AS trade_data
+FROM apt_trade at
+GROUP BY at.old_address;
+
+UPDATE apartment a
+    JOIN (
+    SELECT
+    ar.old_address,
+    JSON_ARRAYAGG(
+    JSON_OBJECT(
+    'build_year', ar.build_year,
+    'contract_term', ar.contract_term,
+    'contract_type', ar.contract_type,
+    'deal_day', ar.deal_day,
+    'deal_month', ar.deal_month,
+    'deal_year', ar.deal_year,
+    'deposit', ar.deposit,
+    'exclu_use_area', ar.exclu_use_area,
+    'floor', ar.floor,
+    'jibun', ar.jibun,
+    'monthly_rent', ar.monthly_rent,
+    'pre_deposit', ar.pre_deposit,
+    'pre_monthly_rent', ar.pre_monthly_rent,
+    'sgg_code', ar.sgg_code,
+    'umd_name', ar.umd_name,
+    'sgg_name', ar.sgg_name
+    )
+    ) AS rent_data
+    FROM apt_rent ar
+    GROUP BY ar.old_address
+    ) r
+ON a.oldAddress = r.old_address
+    SET a.rent_data = r.rent_data;
+
+UPDATE apartment a
+    JOIN (
+    SELECT
+    at.old_address,
+    JSON_ARRAYAGG(
+    JSON_OBJECT(
+    'build_year', at.build_year,
+    'buyer_type', at.buyer_type,
+    'deal_amount', at.deal_amount,
+    'deal_year', at.deal_year,
+    'deal_month', at.deal_month,
+    'deal_day', at.deal_day,
+    'dealing_type', at.dealing_type,
+    'exclu_use_area', at.exclu_use_area,
+    'floor', at.floor,
+    'jibun', at.jibun,
+    'land_leasehold_gbn', at.land_leasehold_gbn,
+    'sgg_code', at.sgg_code,
+    'umd_name', at.umd_name,
+    'estate_agent_address', at.estate_agent_address
+    )
+    ) AS trade_data
+    FROM apt_trade at
+    GROUP BY at.old_address
+    ) t
+ON a.oldAddress = t.old_address
+    SET a.trade_data = t.trade_data;
+
+CREATE INDEX idx_old_address_rent ON apt_rent(old_address);
+CREATE INDEX idx_old_address_trade ON apt_trade(old_address);
+CREATE INDEX idx_old_address_apartment ON apartment(oldAddress);
