@@ -18,6 +18,7 @@ const updateResults = (newResults) => {
   results.value = newResults;
 };
 
+// 특정 위치에 커서 위치 시 자동 스크롤
 const focusOption = ref(null);
 const handleMouseMove = (e) => {
   const container = focusOption.value;
@@ -49,6 +50,7 @@ onUnmounted(() => {
   }
 });
 
+// 페이지 안 위치 이동
 const dealInfoSection = ref(null);
 const aptInfoSection = ref(null);
 const shopInfoSection = ref(null);
@@ -73,28 +75,44 @@ const moveAptReview = () => {
   aptReviewSection.value.scrollIntoView({behavior: "smooth"});
 }
 
-
+// 학교 정보 관련
 const tabs = ['초등학교', '중학교', '고등학교'];
 const activeTab = ref('초등학교');
 
 const elementarySchools = ref([
-  { name: '부민초등학교', distance: '486m', time: '7분' },
+  { name: '부민초등학교', type: '공립', distance: '486m', time: '7분' },
 ]);
 
 const middleSchools = ref([
-  { name: '명호중학교', rank: '상위 16%', specialAdmissions: '특목고 17명/자사고 5명' },
-  { name: '경일중학교', rank: '상위 28%', specialAdmissions: '특목고 14명' },
-  { name: '명지중학교', rank: '상위 48%', specialAdmissions: '특목고 4명/자사고 2명' },
+  { name: '명호중학교', type:'공립', distance: '3km', rank: '상위 16%', specialAdmissions: '특목고 17명/자사고 5명' },
+  { name: '경일중학교', type:'사립', distance: '4km', rank: '상위 28%', specialAdmissions: '특목고 14명' },
+  { name: '명지중학교', type:'공립', distance: '3.5km', rank: '상위 48%', specialAdmissions: '특목고 4명/자사고 2명' },
+  { name: '명지중학교', type:'공립', distance: '3.5km', rank: '상위 48%', specialAdmissions: '특목고 4명/자사고 2명' },
 ]);
 
 const highSchools = ref([
-  { name: '부경고등학교', distance: '822m', studentsPerClass: '19.6명' },
-  { name: '혜광고등학교', distance: '834m', studentsPerClass: '16.6명' },
-  { name: '부산서여자고등학교', distance: '863m', studentsPerClass: '20.2명' },
+  { name: '부경고등학교', type:'사립', distance: '822m', studentsPerClass: '19.6명' },
+  { name: '혜광고등학교',  type:'공립', distance: '834m', studentsPerClass: '16.6명' },
+  { name: '부산서여자고등학교',  type:'공립', distance: '863m', studentsPerClass: '20.2명' },
+  { name: '부산서여자고등학교',  type:'공립', distance: '863m', studentsPerClass: '20.2명' },
+  { name: '부산서여자고등학교',  type:'공립', distance: '863m', studentsPerClass: '20.2명' },
 ]);
+
+const showMoreMiddleSchools = ref(false);
+const showMoreHighSchools = ref(false);
+
+const toggleMoreMiddleSchools = () => {
+  showMoreMiddleSchools.value = !showMoreMiddleSchools.value;
+};
+
+const toggleMoreHighSchools = () => {
+  showMoreHighSchools.value = !showMoreHighSchools.value;
+};
 
 const changeTab = (tab) => {
   activeTab.value = tab;
+  showMoreMiddleSchools.value = false;
+  showMoreHighSchools.value = false;
 };
 </script>
 
@@ -246,24 +264,54 @@ const changeTab = (tab) => {
           </div>
           <div class="school-data">
             <template v-if="activeTab === '초등학교'">
-              <div v-for="school in elementarySchools" :key="school.name" class="school-card">
-                <p>{{ school.name }}</p>
-                <p>거리: {{ school.distance }} / {{ school.time }}</p>
+              <div class="meta-data">
+                <div class="sort-by">거리</div>
+                <div class="zone-name">동항초통학구역</div>
+              </div>
+              <div v-for="(school) in elementarySchools" :key="school.name" class="school-card">
+                <div>
+                  <span>{{ school.name }}</span>
+                  <span>{{ school.type }}</span>
+                </div>
+                <div>{{ school.distance }} / {{ school.time }}</div>
               </div>
             </template>
             <template v-else-if="activeTab === '중학교'">
-              <div v-for="school in middleSchools" :key="school.name" class="school-card">
-                <p>{{ school.name }}</p>
-                <p>상위: {{ school.rank }}</p>
-                <p>특목/자사고 진학: {{ school.specialAdmissions }}</p>
+              <div class="meta-data">
+                <div class="sort-by">특목/자사고 진학</div>
+                <div class="zone-name">5학교군</div>
               </div>
+              <div v-for="(school) in (showMoreMiddleSchools ? middleSchools : middleSchools.slice(0, 3))" :key="school.name" class="school-card">
+                <div>
+                  <span>{{ school.name }}</span>
+                  <span>{{ school.type }}/{{ school.distance }}</span>
+                </div>
+                <div>
+                  <span>{{ school.rank }}</span>
+                  <span>{{ school.specialAdmissions }}</span>
+                </div>
+              </div>
+              <button v-if="middleSchools.length > 3" class="more-btn" @click="toggleMoreMiddleSchools">
+                {{ showMoreMiddleSchools ? '간략히 보기' : '더보기' }}
+                <font-awesome-icon :icon="showMoreMiddleSchools ? ['fas', 'angle-up'] : ['fas', 'angle-down']" />
+              </button>
             </template>
             <template v-else-if="activeTab === '고등학교'">
-              <div v-for="school in highSchools" :key="school.name" class="school-card">
-                <p>{{ school.name }}</p>
-                <p>거리: {{ school.distance }}</p>
-                <p>학급당 학생 수: {{ school.studentsPerClass }}</p>
+              <div class="meta-data">
+                <div class="sort-by">학급당 학생 수</div>
+                <div class="zone-name">남부고등학군</div>
               </div>
+              <div v-for="(school) in (showMoreHighSchools ? highSchools : highSchools.slice(0, 3))" :key="school.name" class="school-card">
+                <div>
+                  <span>{{ school.name }}</span>
+                  <span>{{ school.type }}/{{ school.distance }}</span>
+                </div>
+                <div>{{ school.studentsPerClass }}</div>
+              </div>
+              <button v-if="highSchools.length > 3" class="more-btn" @click="toggleMoreHighSchools">
+                {{ showMoreHighSchools ? '간략히 보기' : '더보기' }}
+                <font-awesome-icon :icon="showMoreHighSchools ? ['fas', 'angle-up'] : ['fas', 'angle-down']" />
+              </button>
             </template>
           </div>
         </div>
@@ -302,6 +350,7 @@ const changeTab = (tab) => {
   height: calc(100vh - 65px);
 }
 
+/* 상단 nav 버튼 style */
 input[type=radio] {
   display: none;
 }
@@ -342,7 +391,7 @@ input[type=radio] {
   box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
-
+/* 정보 공통 style */
 .content {
   height: calc(100vh - 65px);
   overflow-y: auto;
@@ -365,7 +414,23 @@ input[type=radio] {
   margin-bottom: 10px;
 }
 
+.more-btn {
+  all: unset;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  color: #293a67;
+  padding: 5px;
+  display: inline-block;
+  margin-top: 15px;
+  text-align: center;
+}
 
+.more-btn:hover {
+  color: #3e62c0;
+}
+
+/* 실거래가 정보 style */
 .deal-info-table {
   width: 100%;
   text-align: center;
@@ -392,21 +457,7 @@ input[type=radio] {
   border-bottom: none;
 }
 
-.more-btn {
-  all: unset;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-  color: #293A67;
-  padding: 5px;
-  margin-top: 10px;
-}
-
-.more-btn:hover {
-  color: #3E62C0;
-}
-
-
+/* 아파트 정보 style */
 .apt-info {
   display: flex;
   margin-top: 15px;
@@ -426,6 +477,7 @@ input[type=radio] {
   margin-bottom: 5px;
 }
 
+/* 주변 상권 정보 style */
 .shop-info {
   display: flex;
   flex-direction: column;
@@ -464,53 +516,24 @@ input[type=radio] {
   color: #4e5e77;
 }
 
-.more-btn {
-  all: unset;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-  color: #293a67;
-  padding: 5px;
-  display: inline-block;
-  margin-top: 15px;
-  text-align: center;
-}
-
-.more-btn:hover {
-  color: #3e62c0;
-}
-
-
-.school-info {
-  border: 1px solid #ccc;
-  padding: 16px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-}
-
-.info-title {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 16px;
-}
-
+/* 학교 정보 style */
 .tab-buttons {
   display: flex;
   margin-bottom: 16px;
 }
 
 .tab-buttons button {
+  all: unset;
   flex: 1;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
+  padding: 5px 8px;
+  border-bottom: 1px solid #ccc;
   background-color: #fff;
   cursor: pointer;
-  transition: all 0.3s ease;
+  //transition: all 0.3s ease;
 }
 
 .tab-buttons button.active {
-  background-color: #007bff;
-  color: #fff;
+  border-bottom: 2px solid #453abd;
 }
 
 .tab-buttons button:not(:last-child) {
@@ -518,15 +541,53 @@ input[type=radio] {
 }
 
 .school-data {
+  margin: 0 10px;
+}
+
+.meta-data {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.sort-by {
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.zone-name {
+  font-size: 14px;
+  color: #6e6e6e;
 }
 
 .school-card {
-  border: 1px solid #ddd;
-  padding: 12px;
-  margin-bottom: 8px;
-  border-radius: 6px;
-  background-color: #fff;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 10px 0;
+}
+
+.school-card > div:first-child,
+.school-card > div:nth-child(2) {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.school-card > div:nth-child(2) {
+  text-align: right;
+}
+
+.school-card > div:first-child > span:first-child,
+.school-card > div:nth-child(2) > span:first-child{
+  font-size: 16px;
+  color: #333333;
+}
+
+.school-card > div:first-child > span:nth-child(2),
+.school-card > div:nth-child(2) > span:nth-child(2) {
+  font-size: 13px;
+  color: #6e6e6e;
 }
 </style>
