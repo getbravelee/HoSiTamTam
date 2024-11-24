@@ -1,7 +1,16 @@
 package schema
 
+CREATE TABLE favorite (
+                          user_id BIGINT NOT NULL,        -- 사용자 ID
+                          apt_id VARCHAR(255) NOT NULL,   -- 아파트 ID (Apartment 테이블의 id와 일치)
+                          is_favorite BOOLEAN NOT NULL,   -- 즐겨찾기 여부
+                          PRIMARY KEY (user_id, apt_id),  -- 복합 기본 키
+                          FOREIGN KEY (user_id) REFERENCES users(user_id),  -- 사용자 테이블 참조
+                          FOREIGN KEY (apt_id) REFERENCES Apartment(id)    -- 아파트 테이블 참조
+);
+
 CREATE TABLE users (
-                       user_id INT AUTO_INCREMENT PRIMARY KEY,                -- 사용자 고유 ID
+                       user_id BIGINT AUTO_INCREMENT PRIMARY KEY,                -- 사용자 고유 ID
                        user_login_id VARCHAR(255) NOT NULL UNIQUE,             -- 사용자 로그인 ID (유니크)
                        user_login_password VARCHAR(255) NOT NULL,              -- 사용자 비밀번호 (해싱된 비밀번호를 저장)
                        user_nickname VARCHAR(255) NOT NULL,                    -- 사용자 닉네임
