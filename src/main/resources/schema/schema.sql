@@ -90,3 +90,25 @@ FROM home
 WHERE
         status = '존재' -- 상태가 '존재'인 것만 추출
   AND (LENGTH(law_dong_name) - LENGTH(REPLACE(law_dong_name, ' ', ''))) = 2; -- 띄어쓰기 2개
+
+-- 댓글
+CREATE TABLE comment (
+                         id BIGINT AUTO_INCREMENT PRIMARY KEY,  -- 댓글 ID
+                         post_id BIGINT NOT NULL,  -- 게시글 ID (댓글이 달리는 게시글)
+                         user_id BIGINT NOT NULL,  -- 작성자 ID (사용자 테이블과 연관)
+                         nickname VARCHAR(255) NOT NULL,  -- 작성자 닉네임
+                         content TEXT NOT NULL,  -- 댓글 내용
+                         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- 작성일
+                         likes INT DEFAULT 0,  -- 댓글 좋아요 수
+                         image_urls TEXT,  -- 이미지 URL (최대 3개 이미지)
+                         FOREIGN KEY (user_id) REFERENCES users(user_id)  -- 사용자 테이블과 연관 (외래키)
+);
+CREATE TABLE comment_likes (
+                               id BIGINT AUTO_INCREMENT PRIMARY KEY,  -- 좋아요 ID
+                               comment_id BIGINT NOT NULL,  -- 댓글 ID (comment 테이블과 연관)
+                               user_id BIGINT NOT NULL,  -- 좋아요를 누른 사용자 ID
+                               created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- 좋아요를 누른 시간
+                               UNIQUE (comment_id, user_id),  -- 동일한 댓글에 중복 좋아요를 방지
+                               FOREIGN KEY (comment_id) REFERENCES comment(id),
+                               FOREIGN KEY (user_id) REFERENCES users(user_id)  -- 사용자 테이블과 연관 (외래키)
+);
