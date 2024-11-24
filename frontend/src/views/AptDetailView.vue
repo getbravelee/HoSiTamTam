@@ -349,11 +349,14 @@ const comments = ref([
             <CommentItem v-for="(comment, index) in comments" :key="index" :comment="comment" />
           </div>
         </div>
-        <button class="add-comment-btn">
-          이야기 추가하기
-        </button>
+        <RouterLink :to="{ name: 'comments' }"  class="no-decoration">
+          <button class="add-comment-btn">
+            이야기 추가하기
+          </button>
+        </RouterLink>
       </div>
     </div>
+    <RouterView />
   </div>
 </template>
 
@@ -639,5 +642,10 @@ input[type=radio] {
   background-color: #293A67;
   color: white;
   cursor: pointer;
+}
+
+.no-decoration {
+  text-decoration: none;
+  color: black;
 }
 </style>

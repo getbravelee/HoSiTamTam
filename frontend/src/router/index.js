@@ -7,6 +7,7 @@ import SavedView from "@/views/SavedView.vue";
 import RegionListView from "@/views/RegionListView.vue";
 import AptListView from "@/views/AptListView.vue";
 import AptDetailView from "@/views/AptDetailView.vue";
+import CommentsView from "@/views/CommentsView.vue";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -54,6 +55,14 @@ const router = createRouter({
                     name: "aptDetail",
                     component: AptDetailView,
                     props: true,
+                    children: [
+                        {
+                            path: 'comments',
+                            name: 'comments',
+                            component: CommentsView,
+                            props: true,
+                        },
+                    ],
                 },
             ]
         },
