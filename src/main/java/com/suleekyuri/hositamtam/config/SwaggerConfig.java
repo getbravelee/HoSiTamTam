@@ -45,4 +45,9 @@ public class SwaggerConfig {
     public GroupedOpenApi authApi() {
         return GroupedOpenApi.builder().group("hositamtam-auth").pathsToMatch("/auth/**").build();
     }
+
+    @Bean
+    public GroupedOpenApi favoriteApi() {
+        return GroupedOpenApi.builder().group("hositamtam-favorite").pathsToMatch("/favorites/**").build();
+    }
 }

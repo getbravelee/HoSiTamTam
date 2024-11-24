@@ -1,12 +1,15 @@
 package schema
 
 CREATE TABLE users (
-                       user_id INT AUTO_INCREMENT PRIMARY KEY,            -- 사용자 고유 ID
-                       user_login_id VARCHAR(255) NOT NULL UNIQUE,         -- 사용자 로그인 ID (유니크)
-                       user_login_password VARCHAR(255) NOT NULL,          -- 사용자 비밀번호 (해싱된 비밀번호를 저장)
-                       user_nickname VARCHAR(255) NOT NULL,                -- 사용자 닉네임
-                       user_email VARCHAR(255) NOT NULL UNIQUE,            -- 사용자 이메일 (유니크)
-                       created_at DATETIME DEFAULT CURRENT_TIMESTAMP       -- 계정 생성일 (기본값: 현재 시간)
+                       user_id INT AUTO_INCREMENT PRIMARY KEY,                -- 사용자 고유 ID
+                       user_login_id VARCHAR(255) NOT NULL UNIQUE,             -- 사용자 로그인 ID (유니크)
+                       user_login_password VARCHAR(255) NOT NULL,              -- 사용자 비밀번호 (해싱된 비밀번호를 저장)
+                       user_nickname VARCHAR(255) NOT NULL,                    -- 사용자 닉네임
+                       user_email VARCHAR(255) NOT NULL UNIQUE,                -- 사용자 이메일 (유니크)
+                       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,         -- 계정 생성일 (기본값: 현재 시간)
+                       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  -- 계정 정보 수정일 (자동으로 갱신)
+                       is_deleted BOOLEAN DEFAULT FALSE,                       -- 삭제 여부 (기본값: FALSE)
+                       deleted_at DATETIME NULL                                -- 삭제된 날짜 (NULL이면 삭제되지 않음)
 );
 
 CREATE TABLE news (
