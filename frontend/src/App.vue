@@ -6,6 +6,7 @@ import SideMenu from "@/components/SideMenu.vue";
 import { RouterView } from "vue-router";
 import MapMain from "@/components/MapMain.vue";
 import LoginBtn from "@/components/LoginBtn.vue";
+import RegionBtn from "@/components/RegionBtn.vue";
 </script>
 
 <template>
@@ -13,6 +14,7 @@ import LoginBtn from "@/components/LoginBtn.vue";
     <MapMain />
     <LoginBtn />
     <SideMenu />
+    <RegionBtn />
     <RouterView />
   </div>
 </template>
