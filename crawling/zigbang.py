@@ -96,7 +96,6 @@ def getAptInfoData(danjiId):
 
     return list(filtered_data.keys()), list(filtered_data.values())
 
-
 # CSV 파일로 변경
 def makeCSV(geohashName, reviewList):
     fileName = geohashName + ".csv"
