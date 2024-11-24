@@ -1,15 +1,26 @@
 <template>
-<!--  <img alt="Vue logo" src="./assets/logo.png">-->
-<!--  <HelloWorld msg="Welcome to Your Vue.js App"/>-->
+  <SearchBar />
+  <AptList />
+  <AptDetail />
+  <FilteringWord />
+  <ChatBot/>
 </template>
 
 <script>
-// import HelloWorld from './components/HelloWorld.vue'
+import SearchBar from "@/components/SearchBar.vue";
+import FilteringWord from "@/components/FilteringWord.vue";
+import ChatBot from "@/components/ChatBot.vue";
+import AptDetail from "@/components/AptDetail.vue";
+import AptList from "@/components/AptList.vue";
 
 export default {
   name: 'App',
   components: {
-    // HelloWorld
+    SearchBar,
+    AptDetail,
+    AptList,
+    FilteringWord,
+    ChatBot
   }
 }
 </script>
