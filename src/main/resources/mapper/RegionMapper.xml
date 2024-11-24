@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.suleekyuri.hositamtam.region.mapper.RegionMapper">
+    <select id="findByDongCode" resultType="com.suleekyuri.hositamtam.region.dto.RegionDto">
+        SELECT
+--             bcode, trade_data의 deal_amount(null 일 수도 있음), 거래날짜
+            id,
+            name AS aptName
+        FROM apartment
+        WHERE local3 = #{bcode}
+    </select>
+</mapper>
