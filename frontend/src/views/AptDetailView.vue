@@ -1,7 +1,7 @@
 <script setup>
 import SearchBar from "@/components/SearchBar.vue";
 import {onMounted, onUnmounted, ref, watch} from "vue";
-import {useRoute} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import CommentItem from "@/components/CommentItem.vue";
 
 const route = useRoute();
@@ -146,15 +146,25 @@ const comments = ref([
     ],
   },
 ]);
+
+// 이전 페이지로 이동하기
+const router = useRouter();
+const goBack = () => {
+  router.back();
+}
+
+const goToMap = () => {
+  router.push({ name: 'map' });
+};
 </script>
 
 <template>
   <div>
     <SearchBar :value="query" @results="updateResults" :backgroundColor="'#293A67'"/>
     <div class="result-bar">
-      <font-awesome-icon :icon="['fas', 'arrow-left']" size="lg"/>
+      <font-awesome-icon :icon="['fas', 'arrow-left']" size="lg" @click="goBack()"/>
       {{ aptName }}
-      <font-awesome-icon :icon="['fas', 'xmark']" size="xl"/>
+      <font-awesome-icon :icon="['fas', 'xmark']" size="xl" @click="goToMap()"/>
     </div>
 
     <div class="body-container">

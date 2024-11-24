@@ -1,16 +1,27 @@
 <script setup>
 import {ref} from "vue";
 import ListItem from "@/components/ListItem.vue";
+import {useRouter} from "vue-router";
 
 const tab = ref('apt');
+
+// 이전 페이지로 이동하기
+const router = useRouter();
+const goBack = () => {
+  router.back();
+}
+
+const goToMap = () => {
+  router.push({ name: 'map' });
+};
 </script>
 
 <template>
   <div>
     <div class="top-bar">
-      <font-awesome-icon :icon="['fas', 'arrow-left']" size="lg"/>
+      <font-awesome-icon :icon="['fas', 'arrow-left']" size="lg" @click="goBack()"/>
       즐겨찾기 목록
-      <font-awesome-icon :icon="['fas', 'xmark']" size="xl"/>
+      <font-awesome-icon :icon="['fas', 'xmark']" size="xl" @click="goToMap()"/>
     </div>
 
     <div class="body-container">

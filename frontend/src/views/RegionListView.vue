@@ -39,15 +39,24 @@ const goToApartmentList = (region) => {
     state: { results: data }
   });
 };
+
+// 이전 페이지로 이동하기
+const goBack = () => {
+  router.back();
+}
+
+const goToMap = () => {
+  router.push({ name: 'map' });
+};
 </script>
 
 <template>
   <div>
     <SearchBar :value="query" @results="updateResults" :backgroundColor="'#293A67'"/>
     <div class="result-bar">
-      <font-awesome-icon :icon="['fas', 'arrow-left']" size="lg"/>
+      <font-awesome-icon :icon="['fas', 'arrow-left']" size="lg" @click="goBack()"/>
       {{ query }} 검색 결과
-      <font-awesome-icon :icon="['fas', 'xmark']" size="xl"/>
+      <font-awesome-icon :icon="['fas', 'xmark']" size="xl" @click="goToMap()"/>
     </div>
 
     <div class="body-container">
