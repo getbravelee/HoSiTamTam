@@ -98,19 +98,21 @@ def getAptInfoData(danjiId):
 
 # CSV 파일로 변경
 def makeCSV(geohashName, reviewList):
-    fileName = geohashName + ".csv"
-    f = open(fileName, 'w', encoding='utf-8', newline='')
-    wr = csv.writer(f)
-    for i in reviewList:
-        wr.writerow(i)
-    f.close()
-    print(fileName+" has been created")
+    # 파일명이 .csv로 끝나지 않으면 .csv를 추가
+    if not geohashName.endswith('.csv'):
+        geohashName += '.csv'
+
+    with open(geohashName, 'w', encoding='utf-8', newline='') as f:
+        wr = csv.writer(f)
+        for i in reviewList:
+            wr.writerow(i)
+    print(f"{geohashName} has been created")
 
 
 # 실행 시간 측정을 위한 시작 시간 기록
 start_time = time.time()
 
-geohash = ['wyd']
+geohash = ['wye']
 totalGeohash = []
 for i in geohash:
     tmp4Lv = getHigherGeohash(i)
@@ -129,7 +131,7 @@ for i in totalGeohash:
 
 # 마지막에 모든 아파트 정보를 CSV 파일로 저장
 if all_apartment_data:
-    makeCSV("apartment_data.csv", all_apartment_data)
+    makeCSV("apartment_data", all_apartment_data)
 else:
     print("No apartment data found.")
 
