@@ -123,6 +123,7 @@ const comments = ref([
     date: '2024.11.02',
     content: "강남 한복판에 위치해 있어서 교통이 매우 편리합니다. 주변에 마트와 카페도 많고, 아파트 내부는 매우 깨끗하고 관리가 잘 되어 있습니다. 특히 헬스장과 수영장이 마음에 듭니다.",
     isHelpChecked: false,
+    images: [],
   },
   {
     username: '랑이',
@@ -130,6 +131,7 @@ const comments = ref([
     content:
         "가격에 비해서 괜찮은 아파트입니다. 내부 시설은 잘 갖춰져 있으나, 가끔 엘리베이터가 고장 나는 점이 불편하네요. 위치는 정말 좋습니다. 강남에서 살아본 적이 없어 이 곳이 정말 마음에 듭니다.",
     isHelpChecked: false,
+    images: [],
   },
   {
     username: '랑이',
@@ -137,6 +139,11 @@ const comments = ref([
     content:
         "이 아파트에서 살게 되어 정말 행복합니다. 보안이 철저하고, 대로변과 가까워서 상업시설이 풍부해서 정말 편리해요. 바닥과 벽이 두꺼워 소음 차단도 잘 되어 있어서 이웃과의 관계도 좋습니다.",
     isHelpChecked: false,
+    images: [
+      "https://via.placeholder.com/300x200", // 3 images
+      "https://via.placeholder.com/300x200?text=Image+2",
+      "https://via.placeholder.com/300x200?text=Image+3",
+    ],
   },
 ]);
 </script>

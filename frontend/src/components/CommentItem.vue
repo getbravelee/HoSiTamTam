@@ -1,5 +1,5 @@
 <script setup>
-import {defineProps, ref} from 'vue';
+import {computed, defineProps, ref} from 'vue';
 
 const props = defineProps({
   comment: {
@@ -8,13 +8,27 @@ const props = defineProps({
   }
 });
 
-const localComment = ref({ ...props.comment });
+const localComment = ref({...props.comment});
+const currentImageIndex = ref(0);
+
+// Compute the total number of images
+const totalImages = computed(() => localComment.value.images?.length || 0);
+
+// Move to the previous image
+const showPreviousImage = () => {
+  currentImageIndex.value = (currentImageIndex.value - 1 + totalImages.value) % totalImages.value;
+};
+
+// Move to the next image
+const showNextImage = () => {
+  currentImageIndex.value = (currentImageIndex.value + 1) % totalImages.value;
+};
 </script>
 
 <template>
   <div class="comment-box">
     <div class="comment-header">
-      <font-awesome-icon :icon="['fas', 'circle-user']" class="icon" size="lg" style="color: #a6a6a6;" />
+      <font-awesome-icon :icon="['fas', 'circle-user']" class="icon" size="lg" style="color: #a6a6a6;"/>
       <div class="writer-info">
         <div class="username">{{ localComment.username }}</div>
         <div class="date">{{ localComment.date }}</div>
@@ -27,6 +41,15 @@ const localComment = ref({ ...props.comment });
       </label>
     </div>
     <div class="comment-content">
+      <div v-if="totalImages > 0" class="image-carousel">
+        <img :src="localComment.images[currentImageIndex]" alt="Comment Image" class="carousel-image"/>
+        <button v-if="totalImages > 1" class="carousel-btn left" @click="showPreviousImage">
+          <font-awesome-icon :icon="['fas', 'circle-chevron-right']" size="xl" style="color: #7a7f85;" />
+        </button>
+        <button v-if="totalImages > 1" class="carousel-btn right" @click="showNextImage">
+          <font-awesome-icon :icon="['fas', 'circle-chevron-right']" size="xl" style="color: #7a7f85;" />
+        </button>
+      </div>
       {{ localComment.content }}
     </div>
     <div class="comment-footer">
@@ -96,6 +119,35 @@ const localComment = ref({ ...props.comment });
   line-height: 1.6;
   white-space: pre-wrap;
   margin: 8px 0;
+}
+
+.image-carousel {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.carousel-image {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.carousel-btn {
+  all: unset;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.carousel-btn.left {
+  left: 8px;
+}
+
+.carousel-btn.right {
+  right: 8px;
 }
 
 .comment-footer {
