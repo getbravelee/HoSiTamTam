@@ -4,19 +4,21 @@ import axios from "axios";
 import {useCookies} from "vue3-cookies";
 import {useUserStore} from "@/stores/user";
 
-const { cookies } = useCookies();
+const {cookies} = useCookies();
 const userStore = useUserStore();
 const emit = defineEmits(['closeModal']);
 
 const tab = ref('signIn'); // Default tab is Sign In
 const username = ref('');
 const id = ref('');
+const signUpId = ref('');
 const password = ref('');
 const repeatPassword = ref('');
 const email = ref('');
 const rememberMe = ref(false);
 const errors = ref({
   id: '',
+  signUpId: '',
   password: '',
   repeatPassword: '',
   email: '',
@@ -25,11 +27,11 @@ const errors = ref({
 
 // 유효성 검사 함수
 const validateId = () => {
-  if (id.value.length < 4 && id.value !== '') {
-    errors.value.id = '아이디는 4자 이상이어야 합니다';
+  if (signUpId.value.length < 4 && signUpId.value !== '') {
+    errors.value.signUpId = '아이디는 4자 이상이어야 합니다';
     return false;
   } else {
-    errors.value.id = '';
+    errors.value.signUpId = '';
     return true;
   }
 };
@@ -76,7 +78,7 @@ const validateUsername = () => {
 };
 
 // 각 필드 감시
-watch([id, password, repeatPassword, email, username], () => {
+watch([signUpId, password, repeatPassword, email, username], () => {
   if (tab.value === 'signUp') {
     validateId();
     validatePassword();
@@ -130,9 +132,36 @@ function handleSignIn() {
     } else {
       console.log(response.data.msg);
     }
-  }) .catch((error) => {
+  }).catch((error) => {
     console.log(error.message);
   })
+}
+
+// signUpId 중복 체크
+const isIdAvailable = ref('');
+
+function handleCheckId() {
+  const isIdValid = validateId();
+
+  if (!isIdValid) {
+    return;
+  }
+
+  axios.get('/auth/checkId', {
+    params: {userLoginId: signUpId.value}
+  }).then(response => {
+      const data = response.data;
+      if (data.available) {
+        errors.value.signUpId = '';
+        isIdAvailable.value = '사용 가능한 아이디입니다.';
+      } else {
+        isIdAvailable.value = '';
+        errors.value.signUpId = '이미 사용 중인 아이디입니다.';
+      }
+    }).catch(error => {
+      console.error('아이디 중복 체크 오류:', error.message);
+      errors.value.signUpId = '아이디 중복 체크에 실패했습니다.';
+    });
 }
 
 // 회원가입 버튼 클릭 시
@@ -148,7 +177,7 @@ function handleSignUp() {
   }
 
   axios.post('/auth/register', {
-    "userLoginId": id.value,
+    "userLoginId": signUpId.value,
     "userPassword": password.value,
     "userNickname": username.value,
     "userEmail": email.value,
@@ -156,7 +185,7 @@ function handleSignUp() {
     if (response.data.code === 1) {
       console.log(response.data.msg);
       alert("회원가입이 완료되었습니다.");
-      emit('closeModal'); // 다시 로그인 탭으로?
+      tab.value = 'signIn';
     } else {
       alert(response.data.msg);
     }
@@ -209,9 +238,13 @@ function handleSignUp() {
               <p v-if="errors.username" class="error-message">{{ errors.username }}</p>
             </div>
             <div class="group">
-              <label for="id" class="label">Id</label>
-              <input v-model="id" id="id" type="text" class="input"/>
-              <p v-if="errors.id" class="error-message">{{ errors.id }}</p>
+              <label for="signUpId" class="label">Id</label>
+              <div class="input-wrapper">
+                <input v-model="signUpId" id="signUpId" type="text" class="input"/>
+                <button class="duplicate-check-btn" @click="handleCheckId">중복확인</button>
+              </div>
+              <p v-if="errors.signUpId" class="error-message">{{ errors.signUpId }}</p>
+              <p v-if="isIdAvailable" class="success-message">{{ isIdAvailable }}</p>
             </div>
             <div class="group">
               <label for="pass" class="label">Password</label>
@@ -438,6 +471,34 @@ input[type=checkbox] {
   transform: scale(1) rotate(-45deg);
 }
 
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+#signUpId {
+  padding: 8px 12px;
+  font-size: 16px;
+  flex: 1;
+}
+
+.duplicate-check-btn {
+  background-color: #3b5998;
+  color: white;
+  border: none;
+  padding: 8px 8px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-left: 10px;
+  border-radius: 4px;
+}
+
+.duplicate-check-btn:hover {
+  background-color: #2d4373;
+}
+
+
 .hr {
   height: 2px;
   background: rgba(255, 255, 255, 0.2);
@@ -449,9 +510,13 @@ input[type=checkbox] {
   text-align: center;
 }
 
-.error-message {
+.error-message, .success-message {
   color: red;
   font-size: 12px;
   margin-top: 5px;
+}
+
+.success-message {
+  color: green;
 }
 </style>
