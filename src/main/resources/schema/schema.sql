@@ -94,14 +94,15 @@ WHERE
 -- 댓글
 CREATE TABLE comment (
                          id BIGINT AUTO_INCREMENT PRIMARY KEY,  -- 댓글 ID
-                         post_id BIGINT NOT NULL,  -- 게시글 ID (댓글이 달리는 게시글)
                          user_id BIGINT NOT NULL,  -- 작성자 ID (사용자 테이블과 연관)
                          nickname VARCHAR(255) NOT NULL,  -- 작성자 닉네임
                          content TEXT NOT NULL,  -- 댓글 내용
                          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- 작성일
                          likes INT DEFAULT 0,  -- 댓글 좋아요 수
                          image_urls TEXT,  -- 이미지 URL (최대 3개 이미지)
-                         FOREIGN KEY (user_id) REFERENCES users(user_id)  -- 사용자 테이블과 연관 (외래키)
+                         apt_id varchar(255) NOT NULL,  -- 아파트 ID (댓글이 달리는 아파트)
+                         FOREIGN KEY (user_id) REFERENCES users(user_id),  -- 사용자 테이블과 연관 (외래키)
+                         FOREIGN KEY (apt_id) REFERENCES apartment(id)  -- 아파트 테이블과 연관 (외래키)
 );
 CREATE TABLE comment_likes (
                                id BIGINT AUTO_INCREMENT PRIMARY KEY,  -- 좋아요 ID

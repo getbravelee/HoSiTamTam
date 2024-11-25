@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 public class CommentDto {
 
     private Long id;
-    private Long postId;
     private Long userId;
     private String nickname;
     private String content;
@@ -22,11 +21,11 @@ public class CommentDto {
     private LocalDateTime updatedAt;
     private int likes;
     private String imageUrls;
+    private String aptId;
 
     // 엔티티로 변환
-    public Comment toEntity(Long userId) {
+    public Comment toEntity(Long userId, String aptId) {
         return Comment.builder()
-                .postId(this.postId)
                 .userId(userId)
                 .nickname(this.nickname)
                 .content(this.content)
@@ -34,6 +33,7 @@ public class CommentDto {
                 .updatedAt(LocalDateTime.now())
                 .likes(0)  // 기본값
                 .imageUrls(this.imageUrls)
+                .aptId(aptId)  // aptId를 전달하여 설정
                 .build();
     }
 
@@ -41,7 +41,6 @@ public class CommentDto {
     public static CommentDto fromEntity(Comment comment) {
         return CommentDto.builder()
                 .id(comment.getId())
-                .postId(comment.getPostId())
                 .userId(comment.getUserId())
                 .nickname(comment.getNickname())
                 .content(comment.getContent())
@@ -49,6 +48,7 @@ public class CommentDto {
                 .updatedAt(comment.getUpdatedAt())
                 .likes(comment.getLikes())
                 .imageUrls(comment.getImageUrls())
+                .aptId(comment.getAptId())
                 .build();
     }
 }
