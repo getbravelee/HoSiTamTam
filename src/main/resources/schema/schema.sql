@@ -36,46 +36,46 @@ CREATE TABLE Apartment (
                            local1 VARCHAR(255),                               -- 지역1
                            local2 VARCHAR(255),                               -- 지역2
                            local3 VARCHAR(255),                               -- 지역3
-                           local2_code VARCHAR(20),                           -- 지역2 코드
-                           local3_code VARCHAR(20),                           -- 지역3 코드
+                           local2_code VARCHAR(255),                           -- 지역2 코드
+                           local3_code VARCHAR(255),                           -- 지역3 코드
                            bunji VARCHAR(255),                                -- 번지
                            oldAddress VARCHAR(255),                           -- 구주소
                            roadAddress VARCHAR(255),                          -- 도로명주소
-                           bcode VARCHAR(20),                                 -- B코드
-                           lat DECIMAL(10, 8),                                -- 위도
-                           lng DECIMAL(11, 8),                                -- 경도
+                           bcode VARCHAR(255),                                 -- B코드
+                           lat VARCHAR(255),                                -- 위도
+                           lng VARCHAR(255),                                -- 경도
                            사용승인일 VARCHAR(255),                          -- 사용 승인일
-                           분양세대수 INT,                                   -- 분양 세대 수
+                           분양세대수 VARCHAR(255),                                   -- 분양 세대 수
                            시공사 VARCHAR(255),                              -- 시공사
-                           총세대수 INT,                                     -- 총 세대 수
-                           총동수 INT,                                       -- 총 동 수
-                           최고층수 INT,                                    -- 최고층수
-                           최저층수 INT,                                     -- 최저층수
-                           가구당주차대수 DECIMAL(3, 1),                     -- 가구당 주차 대수
-                           총주차대수 INT,                                   -- 총 주차 대수
+                           총세대수 VARCHAR(255),                                     -- 총 세대 수
+                           총동수 VARCHAR(255),                                       -- 총 동 수
+                           최고층수 VARCHAR(255),                                    -- 최고층수
+                           최저층수 VARCHAR(255),                                     -- 최저층수
+                           가구당주차대수 VARCHAR(255),                     -- 가구당 주차 대수
+                           총주차대수 VARCHAR(255),                                   -- 총 주차 대수
                            주차위치 VARCHAR(255),                            -- 주차 위치
                            난방방식 VARCHAR(255),                            -- 난방 방식
                            난방연료 VARCHAR(255),                            -- 난방 연료
                            편의시설 JSON,                                    -- 편의시설 (JSON 형식)
-                           용적율 DECIMAL(5, 2),                             -- 용적율
-                           건폐율 DECIMAL(5, 2),                             -- 건폐율
+                           용적율 VARCHAR(255),                             -- 용적율
+                           건폐율 VARCHAR(255),                             -- 건폐율
                            건설사 VARCHAR(255),                              -- 건설사
-                           관리사무소전화번호 VARCHAR(20),                  -- 관리사무소 전화번호
+                           관리사무소전화번호 VARCHAR(255),                  -- 관리사무소 전화번호
                            description TEXT,                                  -- 아파트 설명
-                           내진설계 CHAR(1),                                 -- 내진설계 여부 (Y or N)
+                           내진설계 VARCHAR(255),                                 -- 내진설계 여부 (Y or N)
                            image VARCHAR(255),                                -- 아파트 이미지 URL
                            relateDanji JSON,                                  -- 관련 단지 (JSON 형식)
-                           average_rent_price DECIMAL(10, 2),                  -- 평균 임대료
-                           average_sales_price DECIMAL(10, 2),                 -- 평균 매매가
-                           minSalesPrice DECIMAL(10, 2),                       -- 최소 매매가
-                           maxSalesPrice DECIMAL(10, 2),                       -- 최대 매매가
+                           average_rent_price VARCHAR(255),                  -- 평균 임대료
+                           average_sales_price VARCHAR(255),                 -- 평균 매매가
+                           minSalesPrice VARCHAR(255),                       -- 최소 매매가
+                           maxSalesPrice VARCHAR(255),                       -- 최대 매매가
                            room_types JSON,                                   -- 방 타입 (JSON 형식)
                            elementary_zone_name VARCHAR(255),                  -- 초등학교 통학구역명
-                           elementary_zone_code VARCHAR(20),                   -- 초등학교 통학구역 코드
+                           elementary_zone_code VARCHAR(255),                   -- 초등학교 통학구역 코드
                            middle_zone_name VARCHAR(255),                      -- 중학교 통학구역명
-                           middle_zone_code VARCHAR(20),                       -- 중학교 통학구역 코드
+                           middle_zone_code VARCHAR(255),                       -- 중학교 통학구역 코드
                            high_zone_name VARCHAR(255),                        -- 고등학교 통학구역명
-                           high_zone_code VARCHAR(20)                          -- 고등학교 통학구역 코드
+                           high_zone_code VARCHAR(255)                          -- 고등학교 통학구역 코드
 );
 
 -- ??시 ??구 ??동 처럼 띄어 쓰기 2개로만 이루어진 local address 저
