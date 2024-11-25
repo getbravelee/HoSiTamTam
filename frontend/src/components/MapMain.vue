@@ -28,6 +28,7 @@
 
 <script setup>
 import {ref, onMounted} from 'vue';
+import {useRegionStore} from "@/stores/Region";
 
 // 카카오 지도 관련 변수
 const map = ref(null);
@@ -37,39 +38,204 @@ const markers = ref([]);
 
 // 카테고리 정보 (아이콘, 이름 등)
 const categories = ref([
-  {id: 'BK9', name: '은행', icon: 'bank'},
   {id: 'MT1', name: '마트', icon: 'mart'},
   {id: 'PM9', name: '약국', icon: 'pharmacy'},
-  {id: 'OL7', name: '주유소', icon: 'oil'},
-  {id: 'CE7', name: '카페', icon: 'cafe'},
-  {id: 'CS2', name: '편의점', icon: 'store'}
+  {id: 'SW8', name: '지하철', icon: 'subway'},
+  {id: 'HP8', name: '병원', icon: 'hospital'},
+  {id: 'PS3', name: '유치원', icon: 'store'},
+  {id: 'SC4', name: '학교', icon: 'school'},
 ]);
 
 const currCategory = ref(''); // 현재 선택된 카테고리
+let polygons = [];
+let detailMode = 0; // 0: 시도, 1: 시군구, 2: 읍면동
+let level = '';
+const regionStore = useRegionStore();
 
 // 카카오 지도 API와 관련된 함수들
 const loadMap = () => {
   const container = document.getElementById('map');
   const options = {
     center: new window.kakao.maps.LatLng(37.566826, 126.9786567),
-    level: 5
+    level: 12
   };
 
   map.value = new window.kakao.maps.Map(container, options);
   placeOverlay.value = new window.kakao.maps.CustomOverlay({zIndex: 2});
   contentNode.value = document.createElement('div');
   contentNode.value.className = 'placeinfo_wrap';
+
+  // 지도에 폴리곤 추가
+  init('/json/sido.json');
+  window.kakao.maps.event.addListener(map.value, 'zoom_changed', onZoomChanged);
+
+  // 중심의 지역명
+  window.kakao.maps.event.addListener(map.value, 'center_changed', onMapMoveEnd);
+  updateRegionNameFromCenter();
 };
 
-// 지도 확대
+// 지도 확대 축소
 const zoomIn = () => {
   map.value.setLevel(map.value.getLevel() - 1);
 };
 
-// 지도 축소
 const zoomOut = () => {
   map.value.setLevel(map.value.getLevel() + 1);
 };
+
+// 현재 지도 중심 좌표에 해당하는 행정 구역 이름을 찾는 함수
+const updateRegionNameFromCenter = () => {
+  const center = map.value.getCenter();
+  const lat = center.getLat();
+  const lng = center.getLng();
+
+  const geocoder = new window.kakao.maps.services.Geocoder();
+  geocoder.coord2RegionCode(lng, lat, (result, status) => {
+    if (status === window.kakao.maps.services.Status.OK) {
+      const regionName = result[0].address_name;
+      regionStore.setRegionName(regionName);
+      console.log("현재 지역: ", regionName);
+    }
+  });
+};
+
+// 지도 중심이 변경될 때마다 실행되는 함수
+const onMapMoveEnd = () => {
+  updateRegionNameFromCenter();
+};
+
+
+// JSON 데이터 불러오기 및 폴리곤 생성
+const init = (path) => {
+  const url = new URL(path, window.location.origin);
+  // path 경로의 json 파일 파싱
+  fetch(url)
+      .then(response => response.json())
+      .then(geojson => {
+        const units = geojson.features; // JSON "features" key의 값
+        const areas = [];
+
+        units.forEach((unit) => {
+          const coordinates = unit.geometry.coordinates[0];
+          const name = unit.properties.SIG_KOR_NM;
+          const location = unit.properties.SIG_CD;
+
+          const area = {
+            name: name,
+            path: coordinates.map(coordinate => new window.kakao.maps.LatLng(coordinate[1], coordinate[0])),
+            location: location,
+          };
+          areas.push(area);
+        });
+
+        // 지도에 영역 데이터로 폴리곤 표시
+        areas.forEach(area => {
+          displayArea(area)
+        });
+      }).catch(error => {
+    console.error("Error fetching areas:", error);
+  });
+};
+
+const init2 = (path) => {
+  const url = new URL(path, window.location.origin);
+  fetch(url)
+      .then(response => response.json())
+      .then(geojson => {
+        const units = geojson.features; // JSON "features" key의 값
+        const areas = [];
+
+        units.forEach((unit) => {
+          const coordinates = unit.geometry.coordinates[0];
+          const name = unit.properties.EMD_ENG_NM;
+          const location = unit.properties.EMD_CD;
+
+          const area = {
+            name: name,
+            path: coordinates.map(coordinate => new window.kakao.maps.LatLng(coordinate[1], coordinate[0])),
+            location: location,
+          };
+          areas.push(area);
+        });
+
+        areas.forEach(area => {
+          displayArea(area)
+        });
+      }).catch(error => {
+    console.error("Error fetching areas:", error);
+  });
+};
+
+const currentAreaName = ref('');
+// 폴리곤을 지도에 표시하는 함수
+const displayArea = (area) => {
+  const polygon = new window.kakao.maps.Polygon({
+    map: map.value,
+    path: area.path,
+    strokeWeight: 2,
+    strokeColor: '#004c80',
+    strokeOpacity: 0.8,
+    fillColor: '#fff',  // 중심 지역일 경우만 강조
+    fillOpacity: 0.7,
+  });
+  polygons.push(polygon);
+
+  window.kakao.maps.event.addListener(polygon, 'mouseover', (mouseEvent) => {
+    if (currentAreaName.value !== area.name) {
+      polygon.setOptions({fillColor: '#09f'});
+      placeOverlay.value.setContent(`<div class="area">${area.name}</div>`);
+      placeOverlay.value.setPosition(mouseEvent.latLng);
+      placeOverlay.value.setMap(map.value);
+      currentAreaName.value = area.name;
+    } else {
+      polygon.setOptions({fillColor: '#09f'});
+    }
+  });
+
+  window.kakao.maps.event.addListener(polygon, 'mouseout', () => {
+    polygon.setOptions({fillColor: '#fff'});
+    placeOverlay.value.setMap(null);
+  });
+
+  window.kakao.maps.event.addListener(polygon, 'click', (mouseEvent) => {
+    if (detailMode === 0) {
+      map.value.setLevel(10);
+      map.value.panTo(mouseEvent.latLng);
+    } else if (detailMode === 1) {
+      map.value.setLevel(5);
+      map.value.panTo(mouseEvent.latLng);
+    } else {
+      console.log(regionStore.regionName);
+    }
+  });
+};
+
+const removePolygon = () => {
+  polygons.forEach(polygon => polygon.setMap(null));
+  polygons = [];
+};
+
+// 줌 레벨 변경에 따라 json 파일을 변경하는 함수
+const onZoomChanged = () => {
+  level = map.value.getLevel();
+  if (detailMode !== 1 && level <= 10) {
+    detailMode = 1;
+    removePolygon();
+    init('/json/sig.json');
+  } else if (detailMode !== 2 && level <= 6) {
+    detailMode = 2;
+    removePolygon();
+    init2('/json/emd.json');
+    console.log("읍면동 출력 예정");
+  } else {
+    if (detailMode !== 0) {
+      detailMode = 0;
+      removePolygon();
+      init('/json/sido.json');
+    }
+  }
+};
+
 
 const onCategoryClick = (category) => {
   currCategory.value = currCategory.value === category.id ? '' : category.id;

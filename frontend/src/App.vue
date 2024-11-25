@@ -6,6 +6,7 @@ import SideMenu from "@/components/SideMenu.vue";
 import { RouterView } from "vue-router";
 import MapMain from "@/components/MapMain.vue";
 import LoginBtn from "@/components/LoginBtn.vue";
+import RegionBtn from "@/components/RegionBtn.vue";
 </script>
 
 <template>
@@ -13,6 +14,7 @@ import LoginBtn from "@/components/LoginBtn.vue";
     <MapMain />
     <LoginBtn />
     <SideMenu />
+    <RegionBtn />
     <RouterView />
   </div>
 </template>
@@ -20,8 +22,15 @@ import LoginBtn from "@/components/LoginBtn.vue";
 
 <style>
 /* 스타일 추가 */
+@font-face {
+  font-family: 'Pretendard-Regular';
+  src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Pretendard-Regular', Avenir, Helvetica, Arial, sans-serif;
   text-align: center;
 }
 </style>

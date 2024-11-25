@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue';
+import {useRouter} from "vue-router";
 
 const notices = ref([
   { id: 1, title: '개인정보처리방침 개정 안내', content: '안녕하세요. 호시탐탐입니다.\n' +
@@ -66,13 +67,19 @@ const toggleExpand = (id) => {
 //   const bodyContainer = document.querySelector('.body-container');
 //   bodyContainer.addEventListener('scroll', handleScroll);
 // });
+
+// 이전 페이지로 이동하기
+const router = useRouter();
+const goBack = () => {
+  router.back();
+}
 </script>
 
 <template>
   <div>
 <!--    페이지 상단 bar-->
     <div class="top-bar">
-      <font-awesome-icon :icon="['fas', 'arrow-left']" size="xl" style="color: #FFFFFF"/>
+      <font-awesome-icon :icon="['fas', 'arrow-left']" size="xl" style="color: #FFFFFF" @click="goBack()"/>
       <div class="top-bar-title">호시탐탐 소식</div>
     </div>
 <!--    페이지 body-->

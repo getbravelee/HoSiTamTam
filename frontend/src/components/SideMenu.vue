@@ -13,22 +13,41 @@
           <span>Map</span>
         </li>
       </RouterLink>
-      <li>
-        <font-awesome-icon :icon="['fas', 'bookmark']" size="2xl"/>
-        <span>Saved</span>
-      </li>
-      <li>
+      <RouterLink :to="{ name: 'saved' }" class="no-decoration">
+        <li>
+          <font-awesome-icon :icon="['fas', 'bookmark']" size="2xl"/>
+          <span>Saved</span>
+        </li>
+      </RouterLink>
+      <li @click="toggleModal">
         <font-awesome-icon :icon="['fas', 'user']" size="2xl"/>
         <span>MyPage</span>
       </li>
     </ul>
+
+    <MyPageModal v-if="isModalOpen" :isModalOpen="isModalOpen" @closeModal="isModalOpen = false" />
   </div>
 </template>
 
 <script>
-// export default {
-//   name: 'Sidebar',
-// };
+import {defineComponent, ref} from "vue";
+import MyPageModal from "@/components/MyPageModal.vue";
+
+export default defineComponent({
+  components: {MyPageModal},
+  setup() {
+    const isModalOpen = ref(false);
+
+    const toggleModal = () => {
+      isModalOpen.value = !isModalOpen.value;
+    };
+
+    return {
+      isModalOpen,
+      toggleModal,
+    };
+  }
+})
 </script>
 
 <style scoped>
