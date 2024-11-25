@@ -1,10 +1,32 @@
 <script setup>
-import {ref} from "vue";
+import {computed, ref} from "vue";
+import axios from "axios";
+import {useUserStore} from "@/stores/user";
 
-const isHeartClicked = ref(false);
+const userStore = useUserStore();
+// 부모로부터 전달받은 item
+const props = defineProps({
+  item: {
+    type: Object,
+    required: true
+  }
+});
 
-const toggleHeartColor = () => {
-  isHeartClicked.value = !isHeartClicked.value;
+const isHeartClicked = ref(props.item.isFavorite);
+
+const toggleHeartColor = async () => {
+  isHeartClicked.value = false;
+  try {
+    const response = await axios.post(`/remove/${props.item.aptId}`, {
+      headers: {
+        Authorization: `Bearer ${userStore.authToken}`,
+      }
+    });
+    console.log('즐겨찾기 취소 완료', response.data);
+  } catch (error) {
+    console.error('즐겨찾기 상태 변경 실패', error);
+    isHeartClicked.value = true;
+  }
 };
 </script>
 
@@ -16,15 +38,15 @@ const toggleHeartColor = () => {
           alt="AptImg"
           style="width: 150px; height: 100%; border-radius: 10px;"/>
       <font-awesome-icon :icon="['fas', 'heart']" size="lg" class="heart-icon"
-                         :style="{ color: isHeartClicked ? 'white' : 'red' }"
+                         :style="{ color: isHeartClicked ? 'red' : 'white' }"
                          @click="toggleHeartColor" />
     </div>
     <div class="item-info">
-      <div class="dong">명지동</div>
-      <div class="name">명지오션시티삼정그린코아</div>
-      <div class="price">매매 4억 8,000</div>
-      <div class="apt-detail">84m²</div>
-      <div class="apt-detail">109동 6층</div>
+      <div class="dong">{{ props.item.local3 }}</div>
+      <div class="name">{{ props.item.aptName }}</div>
+      <div class="price">매매 {{ props.item.maxSalesPrice.toLocaleString() }}</div>
+      <div class="apt-detail">총 세대수: {{ props.item.totalHome }} 세대</div>
+      <div class="apt-detail">가구 당 주차 대수: {{ props.item.parkingPerHome }}</div>
     </div>
   </div>
 </template>
