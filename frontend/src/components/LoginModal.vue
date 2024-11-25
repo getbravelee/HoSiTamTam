@@ -138,8 +138,8 @@ function handleSignIn() {
 }
 
 // signUpId 중복 체크
-const isIdAvailable = ref('');
-
+const isIdAvailable = ref(false);
+const isAvailableMsg = ref('');
 function handleCheckId() {
   const isIdValid = validateId();
 
@@ -153,10 +153,12 @@ function handleCheckId() {
       const data = response.data;
       if (data.available) {
         errors.value.signUpId = '';
-        isIdAvailable.value = '사용 가능한 아이디입니다.';
+        isAvailableMsg.value = '사용 가능한 아이디입니다.';
+        isIdAvailable.value = true;
       } else {
-        isIdAvailable.value = '';
+        isAvailableMsg.value = '';
         errors.value.signUpId = '이미 사용 중인 아이디입니다.';
+        isIdAvailable.value = false;
       }
     }).catch(error => {
       console.error('아이디 중복 체크 오류:', error.message);
@@ -175,6 +177,12 @@ function handleSignUp() {
     alert("모든 필드를 정확히 입력해주세요.");
     return;
   }
+
+  if (isIdAvailable.value === false) {
+    alert("사용할 수 없는 아이디입니다.");
+    return;
+  }
+
 
   axios.post('/auth/register', {
     "userLoginId": signUpId.value,
@@ -244,7 +252,7 @@ function handleSignUp() {
                 <button class="duplicate-check-btn" @click="handleCheckId">중복확인</button>
               </div>
               <p v-if="errors.signUpId" class="error-message">{{ errors.signUpId }}</p>
-              <p v-if="isIdAvailable" class="success-message">{{ isIdAvailable }}</p>
+              <p v-if="isAvailableMsg" class="success-message">{{ isAvailableMsg }}</p>
             </div>
             <div class="group">
               <label for="pass" class="label">Password</label>
