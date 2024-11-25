@@ -38,7 +38,7 @@ def getAptInfoData(danjiId):
 
         # 제외할 컬럼 리스트
         exclude_columns = [
-            "시행사", "danjiPriceChart", "서비스구분", "관심단지툴팁", "isShowInquiryGuideComponent", "isNewStay",
+            "시행사", "danjiPriceChart", "서비스구분", "관심단지툴팁", "isShowInquiryGuideComponent", "isNewStay", "현장투어"
             "jibunAddress", "분양년월", "분양년월표기", "roadview", "brand", "brand_img", "review_score", "review_cnt",
             "review_recent", "resident_review", "순위", "vr_hometours", "vr_hometours_summeries", "규제지역",
             "real_type", "is후분양", "zedExist", "zedMaintenance", "zedEnable"
@@ -83,10 +83,10 @@ def getAptInfoData(danjiId):
 # CSV 파일로 변경
 def makeCSV(fileName, dataList):
     with open(fileName, 'w', encoding='utf-8', newline='') as f:
-        writer = csv.DictWriter(f, fieldnames=dataList[0].keys())
-        writer.writeheader()  # 헤더 작성
+        writer = csv.writer(f)
+        writer.writerow(dataList[0].keys())  # Write header
         for data in dataList:
-            writer.writerow(data)  # 데이터 기록
+            writer.writerow(data.values())
     print(f"{fileName} has been created")
 
 # 실행 시간 측정을 위한 시작 시간 기록
