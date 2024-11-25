@@ -8,4 +8,5 @@ public interface UserService {
     User getUserByUsername(String username);
     void registerUser(User user);
     String loginUser(LoginDto loginDto);
+    boolean isUserLoginIdAvailable(String userLoginId);
 }

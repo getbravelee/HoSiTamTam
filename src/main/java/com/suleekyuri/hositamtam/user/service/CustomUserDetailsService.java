@@ -1,6 +1,6 @@
 package com.suleekyuri.hositamtam.user.service;
 
-import com.suleekyuri.hositamtam.mapper.UserMapper;
+import com.suleekyuri.hositamtam.user.mapper.UserMapper;
 import com.suleekyuri.hositamtam.user.User;
 import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;

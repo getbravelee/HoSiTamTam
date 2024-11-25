@@ -12,6 +12,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -87,5 +89,16 @@ public class AuthController {
             // 실패 응답 반환 (HTTP 401)
             return new CMRespDto<>(-1, "로그인 실패", e.getMessage());
         }
+    }
+
+    @GetMapping("/checkId")
+    public ResponseEntity<Map<String, Object>> checkUsername(@RequestParam String userLoginId) {
+        boolean isAvailable = userService.isUserLoginIdAvailable(userLoginId);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("userLoginId", userLoginId);
+        response.put("available", isAvailable);
+
+        return ResponseEntity.ok(response);
     }
 }

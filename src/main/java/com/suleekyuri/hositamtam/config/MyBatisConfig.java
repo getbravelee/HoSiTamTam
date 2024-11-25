@@ -11,7 +11,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import javax.sql.DataSource;
 
 @Configuration
-@MapperScan(basePackages = "com.suleekyuri.hositamtam.mapper") // 모든 매퍼 스캔
+@MapperScan(basePackages = "com.suleekyuri.hositamtam.**.mapper") // 모든 매퍼 스캔
 public class MyBatisConfig {
 
     @Bean
@@ -31,4 +31,6 @@ public class MyBatisConfig {
     public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory) {
         return new SqlSessionTemplate(sqlSessionFactory);
     }
+
 }
+
