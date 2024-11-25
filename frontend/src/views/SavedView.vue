@@ -36,6 +36,12 @@ const fetchFavorites = async () => {
   }
 };
 
+// 즐겨찾기 항목이 삭제되었을 때 목록을 갱신
+const handleFavoriteRemoved = (aptId) => {
+  favoriteList.value = favoriteList.value.filter(item => item.aptId !== aptId);
+};
+
+
 onMounted(() => {
   fetchFavorites();
 });
@@ -57,7 +63,7 @@ onMounted(() => {
         <label for="tab-2" class="tab">아파트</label>
       </div>
       <div class="favorite-list">
-        <ListItem v-for="(item) in favoriteList" :key="item.aptId" :item="item"/>
+        <ListItem v-for="(item) in favoriteList" :key="item.aptId" :item="item" @favoriteRemoved="handleFavoriteRemoved"/>
       </div>
     </div>
   </div>

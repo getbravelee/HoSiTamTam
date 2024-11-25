@@ -1,5 +1,5 @@
 <script setup>
-import {computed, ref} from "vue";
+import {defineProps, ref, emit} from "vue";
 import axios from "axios";
 import {useUserStore} from "@/stores/user";
 
@@ -17,12 +17,13 @@ const isHeartClicked = ref(props.item.isFavorite);
 const toggleHeartColor = async () => {
   isHeartClicked.value = false;
   try {
-    const response = await axios.post(`/remove/${props.item.aptId}`, {
+    const response = await axios.delete(`/favorites/remove/${props.item.aptId}`, {
       headers: {
         Authorization: `Bearer ${userStore.authToken}`,
       }
     });
     console.log('즐겨찾기 취소 완료', response.data);
+    emit('favoriteRemoved', props.item.aptId);
   } catch (error) {
     console.error('즐겨찾기 상태 변경 실패', error);
     isHeartClicked.value = true;
