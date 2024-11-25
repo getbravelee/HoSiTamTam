@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.suleekyuri.hositamtam.region.mapper.RegionMapper">
+    <select id="findByDongCode" resultType="com.suleekyuri.hositamtam.region.dto.RegionDto">
+        SELECT
+            id,
+            name AS aptName,
+            local1,
+            local2,
+            local3,
+            max_sales_price AS maxSalesPrice,
+            total_home AS totalHome,
+            parking_per_home AS parkingPerHome,
+            image
+        FROM apartment
+        WHERE bcode = #{bcode}
+    </select>
+</mapper>
