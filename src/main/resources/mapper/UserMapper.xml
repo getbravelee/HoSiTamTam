@@ -27,4 +27,24 @@
             WHERE user_login_id = #{userLoginId}
         )
     </select>
+
+    <!-- 회원정보 조회 -->
+    <select id="findByUserId" resultType="com.suleekyuri.hositamtam.user.User">
+        SELECT * FROM users WHERE user_id = #{userId}
+    </select>
+
+    <!-- 사용자 정보 수정 (nickname만 수정) -->
+    <update id="updateUserInfo" parameterType="com.suleekyuri.hositamtam.user.User">
+        UPDATE users
+        SET user_nickname = #{userNickname}
+        WHERE user_id = #{userId}
+    </update>
+
+    <!-- 회원 탈퇴 -->
+    <update id="updateUserStatus" parameterType="long">
+        UPDATE users
+        SET is_deleted = TRUE,
+            deleted_at = CURRENT_TIMESTAMP
+        WHERE user_id = #{userId}
+    </update>
 </mapper>

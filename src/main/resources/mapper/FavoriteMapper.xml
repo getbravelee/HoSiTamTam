@@ -18,8 +18,10 @@
 
     <!-- 특정 사용자의 즐겨찾기 목록 조회 -->
     <select id="getFavoritesByUserId" resultType="com.suleekyuri.hositamtam.favorite.dto.FavoriteDto">
-        SELECT f.user_id, f.apt_id, f.is_favorite
+        SELECT f.user_id, f.apt_id, f.is_favorite,
+               a.name AS aptName, a.local1, a.local2, a.local3, a.maxSalesPrice, a.총세대수 AS totalHome, a.가구당주차대수 AS parkingPerHome, a.image
         FROM favorite f
+                 JOIN apartment a ON f.apt_id = a.id
         WHERE f.user_id = #{userId}
     </select>
 

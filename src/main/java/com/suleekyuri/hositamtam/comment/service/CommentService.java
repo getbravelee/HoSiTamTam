@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface CommentService {
     // 댓글 작성
-    void createComment(CommentDto commentDto, Long userId);
+    void createComment(CommentDto commentDto, Long userId, String aptId); // aptId 추가
 
     // 댓글 좋아요
     void likeComment(Long commentId, Long userId);
@@ -15,5 +15,5 @@ public interface CommentService {
     void cancelLikeComment(Long commentId, Long userId);
 
     // 특정 게시글의 댓글 목록 조회
-    List<CommentDto> getCommentsByPostId(Long postId);
+    List<CommentDto> getCommentsByAptId(String aptId);
 }
