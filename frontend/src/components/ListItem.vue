@@ -1,6 +1,6 @@
 <script setup>
-import {computed, ref} from "vue";
-import axios from "axios";
+import {defineProps, ref} from "vue";
+// import axios from "axios";
 import {useUserStore} from "@/stores/user";
 
 const userStore = useUserStore();
@@ -14,19 +14,26 @@ const props = defineProps({
 
 const isHeartClicked = ref(props.item.isFavorite);
 
-const toggleHeartColor = async () => {
-  isHeartClicked.value = false;
-  try {
-    const response = await axios.post(`/remove/${props.item.aptId}`, {
-      headers: {
-        Authorization: `Bearer ${userStore.authToken}`,
-      }
-    });
-    console.log('즐겨찾기 취소 완료', response.data);
-  } catch (error) {
-    console.error('즐겨찾기 상태 변경 실패', error);
-    isHeartClicked.value = true;
-  }
+// const toggleHeartColor = async () => {
+//   isHeartClicked.value = false;
+//   try {
+//     const response = await axios.post(`/remove/${props.item.aptId}`, {
+//       headers: {
+//         Authorization: `Bearer ${userStore.authToken}`,
+//       }
+//     });
+//     console.log('즐겨찾기 취소 완료', response.data);
+//   } catch (error) {
+//     console.error('즐겨찾기 상태 변경 실패', error);
+//     isHeartClicked.value = true;
+//   }
+// };
+
+
+// 하트 클릭 시, 부모로 이벤트 전달
+const handleHeartClick = () => {
+  // 부모 컴포넌트에서 처리할 수 있도록 이벤트 전달
+  emit("toggle-favorite", props.item);
 };
 </script>
 
@@ -39,7 +46,7 @@ const toggleHeartColor = async () => {
           style="width: 150px; height: 100%; border-radius: 10px;"/>
       <font-awesome-icon :icon="['fas', 'heart']" size="lg" class="heart-icon"
                          :style="{ color: isHeartClicked ? 'red' : 'white' }"
-                         @click="toggleHeartColor" />
+                         @click="handleHeartClick" />
     </div>
     <div class="item-info">
       <div class="dong">{{ props.item.local3 }}</div>
