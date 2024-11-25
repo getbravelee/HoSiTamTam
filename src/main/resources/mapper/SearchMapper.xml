@@ -4,6 +4,12 @@
 
 <mapper namespace="com.suleekyuri.hositamtam.search.mapper.SearchMapper">
     <select id="findByLocationContaining" resultType="com.suleekyuri.hositamtam.search.dto.SuggestionDto">
-        SELECT id, location_name as locationName FROM location WHERE location_name LIKE CONCAT('%', #{keyword}, '%')
+        select
+            bcode,
+            law_dong_name as dongName
+        from
+            localSigudong
+        WHERE
+            law_dong_name LIKE CONCAT('%', #{keyword}, '%')
     </select>
 </mapper>
