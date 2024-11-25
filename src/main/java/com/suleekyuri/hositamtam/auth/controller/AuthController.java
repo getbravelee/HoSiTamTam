@@ -2,6 +2,7 @@ package com.suleekyuri.hositamtam.auth.controller;
 
 import com.suleekyuri.hositamtam.auth.dto.JoinDto;
 import com.suleekyuri.hositamtam.auth.dto.LoginDto;
+import com.suleekyuri.hositamtam.exception.UnauthorizedException;
 import com.suleekyuri.hositamtam.jwt.JwtProvider;
 import com.suleekyuri.hositamtam.user.User;
 import com.suleekyuri.hositamtam.user.service.UserService;
@@ -88,6 +89,34 @@ public class AuthController {
             log.error("로그인 실패", e);
             // 실패 응답 반환 (HTTP 401)
             return new CMRespDto<>(-1, "로그인 실패", e.getMessage());
+        }
+    }
+
+    // 로그아웃 처리
+    @Operation(summary = "로그아웃", description = "로그아웃 처리")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "로그아웃 성공"),
+            @ApiResponse(responseCode = "400", description = "로그아웃 실패")
+    })
+    @PostMapping("/logout")
+    public CMRespDto<?> logout() {
+        try {
+            // 현재 인증된 사용자인지 확인
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication == null || authentication.getPrincipal().equals("anonymousUser")) {
+                throw new UnauthorizedException("로그인되지 않은 사용자입니다.");
+            }
+
+            // 로그아웃은 클라이언트에서 토큰을 삭제하는 방식
+            // 서버에서는 토큰을 관리하지 않기 때문에, 별도 처리 없이 응답만 보냅니다.
+
+            return new CMRespDto<>(1, "로그아웃 성공", "로그아웃이 완료되었습니다.");
+        } catch (UnauthorizedException e) {
+            log.error("로그인되지 않은 사용자가 로그아웃을 시도했습니다.");
+            return new CMRespDto<>(-1, "로그아웃 실패", "로그인된 사용자만 로그아웃할 수 있습니다.");
+        } catch (Exception e) {
+            log.error("로그아웃 실패", e);
+            return new CMRespDto<>(-1, "로그아웃 실패", e.getMessage());
         }
     }
 
