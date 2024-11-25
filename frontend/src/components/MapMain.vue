@@ -263,23 +263,28 @@ const placesSearchCB = (data, status) => {
 };
 
 const displayPlaces = (places) => {
-  const order = categories.value.findIndex(category => category.id === currCategory.value);
+  // const order = categories.value.findIndex(category => category.id === currCategory.value);
   places.forEach(place => {
-    const marker = addMarker(new window.kakao.maps.LatLng(place.y, place.x), order);
+    const marker = addMarker(new window.kakao.maps.LatLng(place.y, place.x));
     window.kakao.maps.event.addListener(marker, 'click', () => {
       displayPlaceInfo(place);
     });
   });
 };
 
-const addMarker = (position, order) => {
-  const imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/places_category.png';
-  const imageSize = new window.kakao.maps.Size(27, 28);
-  const imgOptions = {
-    spriteSize: new window.kakao.maps.Size(72, 208),
-    spriteOrigin: new window.kakao.maps.Point(46, order * 36),
-    offset: new window.kakao.maps.Point(11, 28)
-  };
+const categoryIcons = {
+  MT1: require('@/assets/mart-32.png'),
+  PM9: require('@/assets/pharm-32.png'),
+  SW8: require('@/assets/sub-32.png'),
+  HP8: require('@/assets/hospital-32.png'),
+  PS3: require('@/assets/kinder-32.png'),
+  SC4: require('@/assets/school-32.png'),
+};
+
+const addMarker = (position) => {
+  const imageSrc = categoryIcons[currCategory.value];
+  const imageSize = new window.kakao.maps.Size(32, 32);
+  const imgOptions = {offset: new window.kakao.maps.Point(11, 28)};
 
   const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions);
   const marker = new window.kakao.maps.Marker({

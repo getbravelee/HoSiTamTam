@@ -1,7 +1,9 @@
 <script setup>
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import ListItem from "@/components/ListItem.vue";
 import {useRouter} from "vue-router";
+import {useUserStore} from "@/stores/user";
+import axios from "axios";
 
 const tab = ref('apt');
 
@@ -14,6 +16,29 @@ const goBack = () => {
 const goToMap = () => {
   router.push({ name: 'map' });
 };
+
+// 즐겨찾기 목록 불러오기
+const userStore = useUserStore();
+const favoriteList = ref([]);
+
+const fetchFavorites = async () => {
+  try {
+    const response = await axios.get('/favorites', {
+      headers: {
+        // "Content-Type": "application/json",
+        Authorization: `Bearer ${userStore.authToken}`,
+      },
+    });
+    console.log(response.data);
+    favoriteList.value = response.data;
+  } catch (error) {
+    console.error('즐겨찾기 목록 조회 실패:', error);
+  }
+};
+
+onMounted(() => {
+  fetchFavorites();
+});
 </script>
 
 <template>
@@ -32,9 +57,7 @@ const goToMap = () => {
         <label for="tab-2" class="tab">아파트</label>
       </div>
       <div class="favorite-list">
-        <ListItem />
-        <ListItem />
-        <ListItem />
+        <ListItem v-for="(item) in favoriteList" :key="item.aptId" :item="item"/>
       </div>
     </div>
   </div>
