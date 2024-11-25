@@ -1,9 +1,10 @@
 <script setup>
 import SearchBar from "@/components/SearchBar.vue";
-import {onMounted, onUnmounted, ref, watch} from "vue";
+import {computed, onMounted, onUnmounted, ref, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import CommentItem from "@/components/CommentItem.vue";
 import {useUserStore} from "@/stores/user";
+import {usePlaceStore} from "@/stores/place";
 
 const route = useRoute();
 const aptName = ref(history.state.aptName || '');
@@ -168,6 +169,43 @@ const handleAddComment = () => {
     alert('로그인이 필요합니다.');
   }
 };
+
+// 상권 정보 불러오기
+const placeStore = usePlaceStore();
+const visibleItems = ref([]);
+const itemsPerPage = 3;
+const currentPage = ref(0);
+
+const categoryItems = computed(() => {
+  const allItems = [];
+  const categories = ['대형마트', '약국', '지하철', '병원', '어린이집,유치원', '학교'];
+  const itemsByCategory = placeStore.getCategoryItems();
+
+  while (categories.some(category => itemsByCategory[category] && itemsByCategory[category].length > 0)) {
+    categories.forEach(category => {
+      if (itemsByCategory[category] && itemsByCategory[category].length > 0) {
+        allItems.push(itemsByCategory[category].shift());
+      }
+    });
+  }
+
+  return allItems;
+});
+
+onMounted(() => {
+  loadMoreItems();
+});
+
+const loadMoreItems = () => {
+  const startIndex = currentPage.value * itemsPerPage;
+  const nextItems = categoryItems.value.slice(startIndex, startIndex + itemsPerPage);
+  visibleItems.value.push(...nextItems);
+  currentPage.value++;
+};
+
+const formatNumber = (value) => {
+  return new Intl.NumberFormat().format(value);
+};
 </script>
 
 <template>
@@ -276,31 +314,51 @@ const handleAddComment = () => {
         <div class="section" ref="shopInfoSection">
           <div class="info-title">🛒주변 상권 정보</div>
           <div class="shop-info">
-            <div class="shop-item">
-              <div class="shop-icon">🛍️</div>
+            <div
+                v-for="(item, index) in visibleItems"
+                :key="index"
+                class="shop-item"
+            >
+              <div class="shop-icon">
+                <span v-if="item.category_group_name === '대형마트'">🛍️</span>
+                <span v-else-if="item.category_group_name === '약국'">💊</span>
+                <span v-else-if="item.category_group_name === '지하철'">🚇</span>
+                <span v-else-if="item.category_group_name === '병원'">🩺</span>
+                <span v-else-if="item.category_group_name === '어린이집,유치원'">👶🏻</span>
+                <span v-else-if="item.category_group_name === '학교'">🏫</span>
+              </div>
               <div class="shop-details">
-                <div class="shop-name">스타필드 (스타필드시티명지)</div>
-                <div class="shop-distance">1.3km, 5분 거리</div>
+                <div class="shop-name">{{ item.place_name }}</div>
+                <div class="shop-distance">
+                  {{ formatNumber(item.distance) }}m / {{ item.category_group_name }}
+                </div>
               </div>
             </div>
-            <div class="shop-item">
-              <div class="shop-icon">🌳</div>
-              <div class="shop-details">
-                <div class="shop-name">남명공원 (테니스장 5.7배)</div>
-                <div class="shop-distance">14m, 1분 거리</div>
-              </div>
-            </div>
-            <div class="shop-item">
-              <div class="shop-icon">⚽</div>
-              <div class="shop-details">
-                <div class="shop-name">명지공원 (축구장 23.9배)</div>
-                <div class="shop-distance">563m, 2분 거리</div>
-              </div>
-            </div>
+<!--            <div class="shop-item">-->
+<!--              <div class="shop-icon">🛍️</div>-->
+<!--              <div class="shop-details">-->
+<!--                <div class="shop-name">스타필드 (스타필드시티명지)</div>-->
+<!--                <div class="shop-distance">1.3km, 5분 거리</div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--            <div class="shop-item">-->
+<!--              <div class="shop-icon">🌳</div>-->
+<!--              <div class="shop-details">-->
+<!--                <div class="shop-name">남명공원 (테니스장 5.7배)</div>-->
+<!--                <div class="shop-distance">14m, 1분 거리</div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--            <div class="shop-item">-->
+<!--              <div class="shop-icon">⚽</div>-->
+<!--              <div class="shop-details">-->
+<!--                <div class="shop-name">명지공원 (축구장 23.9배)</div>-->
+<!--                <div class="shop-distance">563m, 2분 거리</div>-->
+<!--              </div>-->
+<!--            </div>-->
           </div>
-          <button class="more-btn">
+          <button v-if="visibleItems.length < categoryItems.length" class="more-btn" @click="loadMoreItems">
             더보기
-            <font-awesome-icon :icon="['fas', 'angle-down']"/>
+            <font-awesome-icon :icon="['fas', 'angle-down']" />
           </button>
         </div>
         <!-- 학군 정보 -->
