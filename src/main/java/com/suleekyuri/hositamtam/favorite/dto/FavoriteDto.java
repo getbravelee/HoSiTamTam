@@ -18,4 +18,5 @@ public class FavoriteDto {
     private int maxSalesPrice; // 최고 가격
     private int totalHome; // 총세대수
     private double parkingPerHome; // 가구당 주차대수
+    private String image;
 }

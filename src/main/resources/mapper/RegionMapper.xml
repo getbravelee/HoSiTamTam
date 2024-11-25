@@ -5,10 +5,16 @@
 <mapper namespace="com.suleekyuri.hositamtam.region.mapper.RegionMapper">
     <select id="findByDongCode" resultType="com.suleekyuri.hositamtam.region.dto.RegionDto">
         SELECT
---             bcode, trade_data의 deal_amount(null 일 수도 있음), 거래날짜
             id,
-            name AS aptName
+            name AS aptName,
+            local1,
+            local2,
+            local3,
+            max_sales_price AS maxSalesPrice,
+            total_home AS totalHome,
+            parking_per_home AS parkingPerHome,
+            image
         FROM apartment
-        WHERE local3 = #{bcode}
+        WHERE bcode = #{bcode}
     </select>
 </mapper>
