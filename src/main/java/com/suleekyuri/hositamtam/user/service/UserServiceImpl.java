@@ -2,6 +2,7 @@ package com.suleekyuri.hositamtam.user.service;
 
 import com.suleekyuri.hositamtam.auth.dto.LoginDto;
 import com.suleekyuri.hositamtam.jwt.JwtProvider;
+import com.suleekyuri.hositamtam.user.dto.UserInfoDto;
 import com.suleekyuri.hositamtam.user.mapper.UserMapper;
 import com.suleekyuri.hositamtam.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,6 +79,56 @@ public class UserServiceImpl implements UserService {
 
         // JWT 토큰 생성
         return jwtProvider.create(user);
+    }
+
+
+    // 회원정보 조회
+    @Override
+    public UserInfoDto getUserInfo(Long userId) {
+        User user = userMapper.findByUserId(userId);
+        if (user == null) {
+            throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
+        }
+        return new UserInfoDto(user.getUserId(), user.getUserLoginId(), user.getUserNickname(), user.getUserEmail());
+    }
+
+    @Override
+    public void updateUserInfo(Long userId, UserInfoDto userInfoDto) {
+        // 사용자 조회
+        User user = userMapper.findByUserId(userId);
+        if (user == null) {
+            throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
+        }
+
+        // nickname 외의 정보 수정 여부 확인
+        if (userInfoDto.getUserEmail() != null && !userInfoDto.getUserEmail().equals(user.getUserEmail())) {
+            throw new IllegalArgumentException("닉네임 외의 정보는 수정할 수 없습니다.");
+        }
+
+        // 새로운 User 객체를 생성하여 수정된 nickname만 업데이트
+        User updatedUser = User.builder()
+                .userId(user.getUserId())  // 기존 userId 유지
+                .userLoginId(user.getUserLoginId())  // 기존 userLoginId 유지
+                .userLoginPassword(user.getUserLoginPassword())  // 기존 userLoginPassword 유지
+                .userNickname(userInfoDto.getUserNickname())  // 수정된 닉네임
+                .userEmail(user.getUserEmail())  // 기존 email 유지
+                .build();
+
+        // 수정된 User 객체를 데이터베이스에 반영
+        userMapper.updateUserInfo(updatedUser);
+    }
+
+    // 회원 탈퇴
+    @Override
+    public void deleteUser(Long userId) {
+        // 사용자 조회
+        User user = userMapper.findByUserId(userId);
+        if (user == null) {
+            throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
+        }
+
+        // 회원 탈퇴 처리
+        userMapper.updateUserStatus(userId);
     }
 
     @Override
