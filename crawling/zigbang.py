@@ -38,7 +38,7 @@ def getAptInfoData(danjiId):
 
         # 제외할 컬럼 리스트
         exclude_columns = [
-            "시행사", "danjiPriceChart", "서비스구분", "관심단지툴팁", "isShowInquiryGuideComponent", "isNewStay",
+            "시행사", "danjiPriceChart", "서비스구분", "관심단지툴팁", "isShowInquiryGuideComponent", "isNewStay", "현장투어", "현장투어작성일",
             "jibunAddress", "분양년월", "분양년월표기", "roadview", "brand", "brand_img", "review_score", "review_cnt",
             "review_recent", "resident_review", "순위", "vr_hometours", "vr_hometours_summeries", "규제지역",
             "real_type", "is후분양", "zedExist", "zedMaintenance", "zedEnable"
@@ -47,53 +47,53 @@ def getAptInfoData(danjiId):
         # 필터링한 데이터
         filtered_data = {k: v for k, v in a.items() if k not in exclude_columns}
 
-        # danjisRoomTypes와 schoolZones에서 키를 안전하게 가져옴
-        danjisRoomTypes = data["pageProps"]["SSRData"].get("danjisRoomTypes", {})
-        school_zones = data["pageProps"]["SSRData"].get("schoolZones", {})
+        danjisRoomTypes = data["pageProps"]["SSRData"].get("danjisRoomTypes", None)
+        school_zones = data["pageProps"]["SSRData"].get("schoolZones", None)
 
-        # 값이 없을 경우 기본값 설정
-        average_rent_price = danjisRoomTypes.get("average_rent_price", "N/A")
-        average_sales_price = danjisRoomTypes.get("average_sales_price", "N/A")
-        minSalesPrice = danjisRoomTypes.get("minSalesPrice", "N/A")
-        maxSalesPrice = danjisRoomTypes.get("maxSalesPrice", "N/A")
-        room_types = danjisRoomTypes.get("room_types", "N/A")
+        # danjisRoomTypes와 school_zones가 None인 경우 처리
+        if danjisRoomTypes and school_zones:
+            average_rent_price = danjisRoomTypes.get("average_rent_price", "N/A")
+            average_sales_price = danjisRoomTypes.get("average_sales_price", "N/A")
+            minSalesPrice = danjisRoomTypes.get("minSalesPrice", "N/A")
+            maxSalesPrice = danjisRoomTypes.get("maxSalesPrice", "N/A")
+            room_types = danjisRoomTypes.get("room_types", "N/A")
 
-        elementary = school_zones.get("elementary", {})
-        middle = school_zones.get("middle", {})
-        high = school_zones.get("high", {})
+            elementary = school_zones.get("elementary", {})
+            middle = school_zones.get("middle", {})
+            high = school_zones.get("high", {})
 
-        additional_data = {
-            "average_rent_price": average_rent_price,
-            "average_sales_price": average_sales_price,
-            "minSalesPrice": minSalesPrice,
-            "maxSalesPrice": maxSalesPrice,
-            "room_types": room_types,
-            "elementary_zone_name": elementary.get("zoneName", "N/A"),
-            "elementary_zone_code": elementary.get("zoneCode", "N/A"),
-            "middle_zone_name": middle.get("zoneName", "N/A"),
-            "middle_zone_code": middle.get("zoneCode", "N/A"),
-            "high_zone_name": high.get("zoneName", "N/A"),
-            "high_zone_code": high.get("zoneCode", "N/A")
-        }
+            additional_data = {
+                "average_rent_price": average_rent_price,
+                "average_sales_price": average_sales_price,
+                "minSalesPrice": minSalesPrice,
+                "maxSalesPrice": maxSalesPrice,
+                "room_types": room_types,
+                "elementary_zone_name": elementary.get("zoneName", "N/A"),
+                "elementary_zone_code": elementary.get("zoneCode", "N/A"),
+                "middle_zone_name": middle.get("zoneName", "N/A"),
+                "middle_zone_code": middle.get("zoneCode", "N/A"),
+                "high_zone_name": high.get("zoneName", "N/A"),
+                "high_zone_code": high.get("zoneCode", "N/A")
+            }
 
-        filtered_data.update(additional_data)
+            filtered_data.update(additional_data)
         return filtered_data
     return None  # 데이터가 없을 경우 None 반환
 
 # CSV 파일로 변경
 def makeCSV(fileName, dataList):
     with open(fileName, 'w', encoding='utf-8', newline='') as f:
-        writer = csv.DictWriter(f, fieldnames=dataList[0].keys())
-        writer.writeheader()  # 헤더 작성
+        writer = csv.writer(f)
+        writer.writerow(dataList[0].keys())  # Write header
         for data in dataList:
-            writer.writerow(data)  # 데이터 기록
+            writer.writerow(data.values())
     print(f"{fileName} has been created")
 
 # 실행 시간 측정을 위한 시작 시간 기록
 start_time = time.time()
 
 # geohash 설정
-geohash = ['wyd']
+geohash = ['wy6']
 totalGeohash = []
 for i in geohash:
     tmp4Lv = getHigherGeohash(i)
