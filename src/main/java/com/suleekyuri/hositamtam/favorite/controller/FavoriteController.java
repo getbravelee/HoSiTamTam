@@ -25,8 +25,9 @@ public class FavoriteController {
     }
 
     // 사용자의 즐겨찾기 목록 조회
-    @GetMapping("/{userId}")
-    public List<FavoriteDto> getFavorites(@PathVariable Long userId) {
+    @GetMapping()
+    public List<FavoriteDto> getFavorites() {
+        Long userId = getAuthenticatedUserId();
         return favoriteService.getFavorites(userId);
     }
 
