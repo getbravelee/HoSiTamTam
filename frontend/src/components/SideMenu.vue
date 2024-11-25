@@ -13,38 +13,53 @@
           <span>Map</span>
         </li>
       </RouterLink>
-      <RouterLink :to="{ name: 'saved' }" class="no-decoration">
-        <li>
-          <font-awesome-icon :icon="['fas', 'bookmark']" size="2xl"/>
-          <span>Saved</span>
-        </li>
-      </RouterLink>
-      <li @click="toggleModal">
+      <li @click="goToSaved">
+        <font-awesome-icon :icon="['fas', 'bookmark']" size="2xl"/>
+        <span>Saved</span>
+      </li>
+      <li @click="openMyPage">
         <font-awesome-icon :icon="['fas', 'user']" size="2xl"/>
         <span>MyPage</span>
       </li>
     </ul>
 
-    <MyPageModal v-if="isModalOpen" :isModalOpen="isModalOpen" @closeModal="isModalOpen = false" />
+    <MyPageModal v-if="isModalOpen" :isModalOpen="isModalOpen" @closeModal="isModalOpen = false"/>
   </div>
 </template>
 
 <script>
 import {defineComponent, ref} from "vue";
 import MyPageModal from "@/components/MyPageModal.vue";
+import {useRouter} from "vue-router";
+import {useUserStore} from "@/stores/user";
 
 export default defineComponent({
   components: {MyPageModal},
   setup() {
     const isModalOpen = ref(false);
+    const userStore = useUserStore();
+    const router = useRouter();
 
-    const toggleModal = () => {
-      isModalOpen.value = !isModalOpen.value;
+    const goToSaved = () => {
+      if (userStore.isLogin) {
+        router.push('/saved');
+      } else {
+        alert('로그인이 필요합니다.');
+      }
+    };
+
+    const openMyPage = () => {
+      if (userStore.isLogin) {
+        isModalOpen.value = !isModalOpen.value;
+      } else {
+        alert('로그인이 필요합니다.');
+      }
     };
 
     return {
       isModalOpen,
-      toggleModal,
+      goToSaved,
+      openMyPage,
     };
   }
 })

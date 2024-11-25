@@ -3,6 +3,7 @@ import SearchBar from "@/components/SearchBar.vue";
 import {onMounted, onUnmounted, ref, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import CommentItem from "@/components/CommentItem.vue";
+import {useUserStore} from "@/stores/user";
 
 const route = useRoute();
 const aptName = ref(history.state.aptName || '');
@@ -154,7 +155,18 @@ const goBack = () => {
 }
 
 const goToMap = () => {
-  router.push({ name: 'map' });
+  router.push({name: 'map'});
+};
+
+// '이야기 추가하기' 버튼 클릭 시 로그인 여부 확인
+const userStore = useUserStore();
+
+const handleAddComment = () => {
+  if (userStore.isLogin) {
+    router.push({name: 'comments'});
+  } else {
+    alert('로그인이 필요합니다.');
+  }
 };
 </script>
 
@@ -363,17 +375,15 @@ const goToMap = () => {
         <div class="section" ref="aptReviewSection">
           <div class="info-title">💬아파트 이야기</div>
           <div>
-            <CommentItem v-for="(comment, index) in comments" :key="index" :comment="comment" />
+            <CommentItem v-for="(comment, index) in comments" :key="index" :comment="comment"/>
           </div>
         </div>
-        <RouterLink :to="{ name: 'comments' }"  class="no-decoration">
-          <button class="add-comment-btn">
-            이야기 추가하기
-          </button>
-        </RouterLink>
+        <button class="add-comment-btn" @click="handleAddComment">
+          이야기 추가하기
+        </button>
       </div>
     </div>
-    <RouterView />
+    <RouterView/>
   </div>
 </template>
 
