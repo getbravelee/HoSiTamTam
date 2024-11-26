@@ -3,14 +3,59 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.suleekyuri.hositamtam.apt.mapper.AptMapper">
 
-    <select id="findAptDetail" parameterType="com.suleekyuri.hositamtam.apt.dto.AptDetailDto">
-        select
-            id AS aptId,
-            name AS aptName,
-            총세대수 AS totalSede
-        from
-            apartment
-        where
+    <!-- 아파트 상세 정보 조회 -->
+    <select id="findAptDetail" resultType="com.suleekyuri.hositamtam.apt.dto.AptDetailDto">
+        SELECT
+            id AS id,
+            name AS name,
+            local1 AS local1,
+            local2 AS local2,
+            local3 AS local3,
+            local2_code AS local2Code,
+            local3_code AS local3Code,
+            bunji AS bunji,
+            oldAddress AS oldAddress,
+            roadAddress AS roadAddress,
+            bcode AS bcode,
+            lat AS lat,
+            lng AS lng,
+            사용승인일 AS usageApprovalDate,
+            분양세대수 AS soldUnits,
+            시공사 AS builder,
+            총세대수 AS totalUnits,
+            총동수 AS totalBuildings,
+            최고층수 AS maxFloors,
+            최저층수 AS minFloors,
+            가구당주차대수 AS parkingPerUnit,
+            총주차대수 AS totalParking,
+            주차위치 AS parkingLocation,
+            난방방식 AS heatingMethod,
+            난방연료 AS heatingFuel,
+            편의시설 AS amenitiesJson,
+            용적율 AS floorAreaRatio,
+            건폐율 AS buildingCoverageRatio,
+            건설사 AS constructionCompany,
+            관리사무소전화번호 AS managementOfficePhone,
+            description AS description,
+            내진설계 AS seismicDesign,
+            image AS imageUrl,
+            relateDanji AS relateDanji,
+            average_rent_price AS averageRentPrice,
+            average_sales_price AS averageSalesPrice,
+            minSalesPrice AS minSalesPrice,
+            maxSalesPrice AS maxSalesPrice,
+            room_types AS roomTypesJson,
+            elementary_zone_name AS elementarySchoolZoneName,
+            elementary_zone_code AS elementarySchoolZoneCode,
+            middle_zone_name AS middleSchoolZoneName,
+            middle_zone_code AS middleSchoolZoneCode,
+            high_zone_name AS highSchoolZoneName,
+            high_zone_code AS highSchoolZoneCode
+        FROM
+            Apartment
+        WHERE
             id = #{aptId}
     </select>
+
 </mapper>
+

@@ -27,7 +27,7 @@ def getDanjiList(geohash):
 
 # 아파트 정보 가져오기
 def getAptInfoData(danjiId):
-    url = "https://www.zigbang.com/_next/data/AO8NL8mFDk0Di9PbIFnDU/home/apt_danjis_detail.json?area_danji_id={}".format(danjiId)
+    url = "https://www.zigbang.com/_next/data/Ryz0pNdvduno7yAGdDqQF/home/apt_danjis_detail.json?area_danji_id={}".format(danjiId)
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36"
     }
@@ -93,7 +93,7 @@ def makeCSV(fileName, dataList):
 start_time = time.time()
 
 # geohash 설정
-geohash = ['wy7']
+geohash = ['wye']
 totalGeohash = []
 for i in geohash:
     tmp4Lv = getHigherGeohash(i)
@@ -113,7 +113,7 @@ for i in totalGeohash:
 
 # 마지막에 모든 아파트 정보를 CSV 파일로 저장
 if all_apartment_data:
-    makeCSV("apartment_data.csv", all_apartment_data)
+    makeCSV("wyd.csv", all_apartment_data)
 else:
     print("No apartment data found.")
 

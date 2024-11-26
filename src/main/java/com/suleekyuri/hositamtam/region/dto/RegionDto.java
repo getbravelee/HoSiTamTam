@@ -17,4 +17,6 @@ public class RegionDto {
     private int totalHome; // 총세대수
     private double parkingPerHome; // 가구당 주차대수
     private String image;
+    private String lat;
+    private String lng;
 }
