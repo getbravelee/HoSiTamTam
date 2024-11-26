@@ -82,8 +82,6 @@ CREATE TABLE Apartment (
 CREATE TABLE localSigudong (
                                id BIGINT AUTO_INCREMENT PRIMARY KEY, -- 고유 식별자
                                law_dong_name VARCHAR(255) NOT NULL, -- 법정동명
-                               sigungu_name VARCHAR(255) NOT NULL, -- 시/군/구 이름
-                               region_name VARCHAR(255) NOT NULL -- 읍/면/동 이름
 );
 
 INSERT INTO localSigudong (law_dong_name, sigungu_name, region_name)
