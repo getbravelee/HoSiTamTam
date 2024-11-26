@@ -38,7 +38,7 @@ def getAptInfoData(danjiId):
 
         # 제외할 컬럼 리스트
         exclude_columns = [
-            "시행사", "danjiPriceChart", "서비스구분", "관심단지툴팁", "isShowInquiryGuideComponent", "isNewStay", "현장투어", "현장투어작성일",
+            "시행사", "danjiPriceChart", "편의시설", "room_types", "서비스구분", "관심단지툴팁", "isShowInquiryGuideComponent", "isNewStay", "현장투어", "현장투어작성일",
             "jibunAddress", "분양년월", "분양년월표기", "roadview", "brand", "brand_img", "review_score", "review_cnt",
             "review_recent", "resident_review", "순위", "vr_hometours", "vr_hometours_summeries", "규제지역",
             "real_type", "is후분양", "zedExist", "zedMaintenance", "zedEnable"
@@ -56,7 +56,7 @@ def getAptInfoData(danjiId):
             average_sales_price = danjisRoomTypes.get("average_sales_price", "N/A")
             minSalesPrice = danjisRoomTypes.get("minSalesPrice", "N/A")
             maxSalesPrice = danjisRoomTypes.get("maxSalesPrice", "N/A")
-            room_types = danjisRoomTypes.get("room_types", "N/A")
+            # room_types = danjisRoomTypes.get("room_types", "N/A")
 
             elementary = school_zones.get("elementary", {})
             middle = school_zones.get("middle", {})
@@ -67,7 +67,7 @@ def getAptInfoData(danjiId):
                 "average_sales_price": average_sales_price,
                 "minSalesPrice": minSalesPrice,
                 "maxSalesPrice": maxSalesPrice,
-                "room_types": room_types,
+                # "room_types": room_types,
                 "elementary_zone_name": elementary.get("zoneName", "N/A"),
                 "elementary_zone_code": elementary.get("zoneCode", "N/A"),
                 "middle_zone_name": middle.get("zoneName", "N/A"),
@@ -93,7 +93,7 @@ def makeCSV(fileName, dataList):
 start_time = time.time()
 
 # geohash 설정
-geohash = ['wy7']
+geohash = ['wyd']
 totalGeohash = []
 for i in geohash:
     tmp4Lv = getHigherGeohash(i)
@@ -105,7 +105,7 @@ all_apartment_data = []  # 모든 아파트 정보를 저장할 리스트
 
 # 아파트 정보 가져오기
 for i in totalGeohash:
-    DanjiListPerGeohash = getDanjiList(i)
+    DanㅌjiListPerGeohash = getDanjiList(i)
     for j in DanjiListPerGeohash:
         apt_info = getAptInfoData(j)
         if apt_info:  # 아파트 정보가 있는 경우
@@ -113,7 +113,7 @@ for i in totalGeohash:
 
 # 마지막에 모든 아파트 정보를 CSV 파일로 저장
 if all_apartment_data:
-    makeCSV("apartment_data.csv", all_apartment_data)
+    makeCSV("wyd.csv", all_apartment_data)
 else:
     print("No apartment data found.")
 
