@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suleekyuri.hositamtam.apt.mapper.AptMapper">
+
+    <select id="findAptDetail" parameterType="com.suleekyuri.hositamtam.apt.dto.AptDetailDto">
+        select
+            id AS aptId,
+            name AS aptName,
+            총세대수 AS totalSede
+        from
+            apartment
+        where
+            id = #{aptId}
+    </select>
+</mapper>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.suleekyuri.hositamtam.favorite.mapper.FavoriteMapper">
+
+    <!-- 즐겨찾기 추가 -->
+    <insert id="addFavorite">
+        INSERT INTO favorite (user_id, apt_id, is_favorite)
+        VALUES (#{userId}, #{aptId}, true);
+    </insert>
+
+    <!-- 즐겨찾기 제거 -->
+    <delete id="removeFavorite" parameterType="map">
+        DELETE FROM favorite
+        WHERE user_id = #{userId} AND apt_id = #{aptId};
+    </delete>
+
+    <!-- 특정 사용자의 즐겨찾기 목록 조회 -->
+    <select id="getFavoritesByUserId" resultType="com.suleekyuri.hositamtam.favorite.dto.FavoriteDto">
+        SELECT f.user_id, f.apt_id, f.is_favorite,
+               a.name AS aptName, a.local1, a.local2, a.local3, a.maxSalesPrice, a.총세대수 AS totalHome, a.가구당주차대수 AS parkingPerHome, a.image
+        FROM favorite f
+                 JOIN apartment a ON f.apt_id = a.id
+        WHERE f.user_id = #{userId}
+    </select>
+
+    <!-- 아파트가 즐겨찾기 상태인지 확인 -->
+    <select id="isFavorite" resultType="java.lang.Boolean">
+        SELECT IFNULL(is_favorite, false)
+        FROM favorite
+        WHERE user_id = #{userId} AND apt_id = #{aptId}
+    </select>
+
+</mapper>
