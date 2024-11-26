@@ -303,10 +303,18 @@ const removeMarker = () => {
   markers.value = [];
 };
 
+const removeMarkers = () => {
+  const markers = map.value.markers || [];
+  markers.forEach(marker => {
+    marker.setMap(null);
+  });
+  map.value.markers = []; // 마커 배열 초기화
+};
+
 const addMarkersToMap = (aptList) => {
   if (!aptList || aptList.length === 0) return;
 
-  removeMarker();
+  removeMarkers();
 
   aptList.forEach(apt => {
     const latLng = new window.kakao.maps.LatLng(apt.lat, apt.lng);
@@ -320,16 +328,17 @@ const addMarkersToMap = (aptList) => {
       image: markerImage
     });
 
-    // window.kakao.maps.event.addListener(marker, 'click', () => {
-    //   showApartmentInfo(apt);
-    // });
+    window.kakao.maps.event.addListener(marker, 'click', () => {
+      map.value.panTo(latLng);
+    });
 
     marker.setMap(map.value);
+    markers.value.push(marker);
   });
 };
 
 // 아파트 목록 수신 (EventBus)
-watch(() => eventBus.aptList, (newAptList) => {
+watch([eventBus.aptList], (newAptList) => {
   if (newAptList) {
     addMarkersToMap(newAptList); // 데이터가 갱신되면 마커 추가
   }

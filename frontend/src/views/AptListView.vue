@@ -90,8 +90,6 @@ const goToApartmentDetail = (apartmentId, aptName, lat, lng) => {
     searchPlaces(category.id, lat, lng);
   }
 
-  console.log(placesStore.placesData);
-
   // const data = results.value.map(item => item);
   // router.push({
   //   name: 'aptDetail',
