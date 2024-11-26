@@ -1,17 +1,15 @@
 <script setup>
-import {onMounted, ref} from "vue";
+import { onMounted, ref } from "vue";
 import ListItem from "@/components/ListItem.vue";
-import {useRouter} from "vue-router";
-import {useUserStore} from "@/stores/user";
+import { useRouter } from "vue-router";
+import { useUserStore } from "@/stores/user";
 import axios from "axios";
 
 const tab = ref('apt');
-
-// 이전 페이지로 이동하기
 const router = useRouter();
 const goBack = () => {
   router.back();
-}
+};
 
 const goToMap = () => {
   router.push({ name: 'map' });
@@ -21,37 +19,46 @@ const goToMap = () => {
 const userStore = useUserStore();
 const favoriteList = ref([]);
 
-
 // 즐겨찾기 취소 함수
 const toggleFavorite = async (item) => {
   try {
-    // 즐겨찾기 취소 API 호출
-    const response = await axios.delete(`/favorites/remove/${item.aptId}`, {}, {
+    const response = await axios.get(`/favorites/isFavorite/${item.aptId}`, {
       headers: {
         Authorization: `Bearer ${userStore.authToken}`,
       },
     });
 
-    // API 응답 성공 시, 리스트에서 해당 아이템 제거
-    if (response.status === 200) {
-      favoriteList.value = favoriteList.value.filter(favItem => favItem.aptId !== item.aptId);
-      console.log('즐겨찾기 취소 완료');
+    if (response.data) {
+      // 즐겨찾기 취소
+      await axios.delete(`/favorites/remove/${item.aptId}`, {
+        headers: { Authorization: `Bearer ${userStore.authToken}` },
+      });
+      item.isFavorite = false;
+    } else {
+      // 즐겨찾기 추가
+      await axios.post(`/favorites/add/${item.aptId}`, {}, {
+        headers: { Authorization: `Bearer ${userStore.authToken}` },
+      });
+      item.isFavorite = true;
+    }
+
+    // 상태 변경 후, 바로 반영
+    const index = favoriteList.value.findIndex(favItem => favItem.aptId === item.aptId);
+    if (index !== -1) {
+      favoriteList.value[index].isFavorite = item.isFavorite;
     }
   } catch (error) {
-    console.error('즐겨찾기 취소 실패:', error);
+    console.error('즐겨찾기 상태 변경 실패:', error);
   }
 };
-
 
 const fetchFavorites = async () => {
   try {
     const response = await axios.get('/favorites', {
       headers: {
-        // "Content-Type": "application/json",
         Authorization: `Bearer ${userStore.authToken}`,
       },
     });
-    console.log(response.data);
     favoriteList.value = response.data;
   } catch (error) {
     console.error('즐겨찾기 목록 조회 실패:', error);
@@ -61,25 +68,39 @@ const fetchFavorites = async () => {
 onMounted(() => {
   fetchFavorites();
 });
+
+// 상세 페이지로 이동하는 함수
+const goToApartmentDetail = (item) => {
+  router.push({
+    name: 'aptDetail',
+    params: {
+      aptId: item.aptId,
+      aptName: item.aptName,
+      lat: item.lat,
+      lng: item.lng,
+    },
+  });
+};
 </script>
 
 <template>
   <div>
     <div class="top-bar">
-      <font-awesome-icon :icon="['fas', 'arrow-left']" size="lg" @click="goBack()"/>
+      <font-awesome-icon :icon="['fas', 'arrow-left']" size="lg" @click="goBack()" />
       즐겨찾기 목록
-      <font-awesome-icon :icon="['fas', 'xmark']" size="xl" @click="goToMap()"/>
+      <font-awesome-icon :icon="['fas', 'xmark']" size="xl" @click="goToMap()" />
     </div>
 
     <div class="body-container">
       <div class="tab-option">
-        <input id="tab-1" type="radio" v-model="tab" value="region" class="option"/>
+        <input id="tab-1" type="radio" v-model="tab" value="region" class="option" />
         <label for="tab-1" class="tab">지역</label>
-        <input id="tab-2" type="radio" v-model="tab" value="apt" class="option"/>
+        <input id="tab-2" type="radio" v-model="tab" value="apt" class="option" />
         <label for="tab-2" class="tab">아파트</label>
       </div>
+
       <div class="favorite-list">
-        <ListItem v-for="(item) in favoriteList" :key="item.aptId" :item="item" @toggleFavorite="toggleFavorite"/>
+        <ListItem v-for="(item) in favoriteList" :key="item.aptId" :item="item" @toggleFavorite="toggleFavorite" @click="goToApartmentDetail(item)" />
       </div>
     </div>
   </div>
