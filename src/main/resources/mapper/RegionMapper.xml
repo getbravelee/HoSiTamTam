@@ -3,9 +3,10 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.suleekyuri.hositamtam.region.mapper.RegionMapper">
+
     <select id="findByDongCode" resultType="com.suleekyuri.hositamtam.region.dto.RegionDto">
         SELECT
-            id AS  aptId,
+            id AS aptId,
             name AS aptName,
             local1,
             local2,
@@ -18,5 +19,15 @@
             lng
         FROM apartment
         WHERE bcode = #{bcode}
+        <if test="areaMin != null and areaMax != null">
+            AND area BETWEEN #{areaMin} AND #{areaMax}
+        </if>
+        <if test="priceMin != null and priceMax != null">
+            AND price BETWEEN #{priceMin} AND #{priceMax}
+        </if>
+        <if test="type != null">
+            AND type = #{type}
+        </if>
     </select>
+
 </mapper>

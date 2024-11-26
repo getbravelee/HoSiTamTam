@@ -20,4 +20,9 @@ public class RegionServiceImpl implements RegionService {
     public List<RegionDto> getAptListByDongCode(String bcode) {
         return regionMapper.findByDongCode(bcode);
     }
+
+    @Override
+    public List<RegionDto> getFilteredApartments(Integer areaMin, Integer areaMax, Integer priceMin, Integer priceMax, String type, String bcode) {
+        return regionMapper.findByDongCode(areaMin, areaMax, priceMin, priceMax, type, bcode);
+    }
 }
