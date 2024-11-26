@@ -3,18 +3,31 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.suleekyuri.hositamtam.region.mapper.RegionMapper">
+
     <select id="findByDongCode" resultType="com.suleekyuri.hositamtam.region.dto.RegionDto">
         SELECT
-            id,
+            id AS aptId,
             name AS aptName,
             local1,
             local2,
             local3,
-            max_sales_price AS maxSalesPrice,
-            total_home AS totalHome,
-            parking_per_home AS parkingPerHome,
-            image
+            maxSalesPrice AS maxSalesPrice,
+            총세대수 AS totalHome,
+            가구당주차대수 AS parkingPerHome,
+            image,
+            lat,
+            lng
         FROM apartment
         WHERE bcode = #{bcode}
+        <if test="areaMin != null and areaMax != null">
+            AND area BETWEEN #{areaMin} AND #{areaMax}
+        </if>
+        <if test="priceMin != null and priceMax != null">
+            AND price BETWEEN #{priceMin} AND #{priceMax}
+        </if>
+        <if test="type != null">
+            AND type = #{type}
+        </if>
     </select>
+
 </mapper>
