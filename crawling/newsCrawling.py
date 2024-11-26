@@ -6,8 +6,8 @@ from selenium.webdriver.common.by import By
 import pymysql
 
 # 크롬 웹드라이버 실행 경로
-path = "C:\\Users\\SSAFY\\Desktop\\pjt\\chromedriver-win64\\chromedriver.exe"
-# path = '/Users/isu/Downloads/chromedriver-mac-arm64/chromedriver'
+# path = "C:\\Users\\SSAFY\\Desktop\\pjt\\chromedriver-win64\\chromedriver.exe"
+path = '/Users/isu/Downloads/chromedriver-mac-arm64/chromedriver'
 
 # 크롤링할 주소 - 뉴스 -> 경제 -> 부동산
 target_url = "https://news.naver.com/breakingnews/section/101/260/"
@@ -33,7 +33,7 @@ db = pymysql.connect(
 cursor = db.cursor()
 
 # 설정할 기준 시간: 현재 시점에서 2주 전으로 설정
-what_times_ago = datetime.now() - timedelta(hours=1)
+what_times_ago = datetime.now() - timedelta(hours=3)
 
 # 2주 이전의 오래된 기사 삭제
 delete_query = "DELETE FROM news WHERE news_date < %s"

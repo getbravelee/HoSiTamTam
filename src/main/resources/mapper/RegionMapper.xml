@@ -20,7 +20,7 @@
         FROM apartment
         WHERE bcode = #{bcode}
         <if test="areaMin != null and areaMax != null">
-            AND minSalesPrice BETWEEN #{areaMin} AND #{areaMax}
+            AND JSON_UNQUOTE(JSON_EXTRACT(trade_data, '$[0].exclu_use_area')) BETWEEN #{areaMin} AND #{areaMax} <!-- exclu_use_area를 기준으로 필터링 -->
         </if>
         <if test="priceMin != null and priceMax != null">
             AND maxSalesPrice BETWEEN #{priceMin} AND #{priceMax}
