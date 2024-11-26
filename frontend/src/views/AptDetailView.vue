@@ -41,7 +41,14 @@ const handleMouseMove = (e) => {
 };
 
 onMounted(() => {
-  loadMoreItems();
+  const checkItemsReady = () => {
+    if (categoryItems.value.length > 0) {
+      loadMoreItems();  // 처음 3개 아이템을 로드
+    } else {
+      setTimeout(checkItemsReady, 100);  // 0.1초마다 확인
+    }
+  };
+  checkItemsReady();
   const container = focusOption.value;
   if (container) {
     container.addEventListener('mousemove', handleMouseMove);
