@@ -25,9 +25,6 @@
         <if test="priceMin != null and priceMax != null">
             AND maxSalesPrice BETWEEN #{priceMin} AND #{priceMax}
         </if>
-        <if test="type != null">
-            AND type = #{type}
-        </if>
     </select>
 
 </mapper>
