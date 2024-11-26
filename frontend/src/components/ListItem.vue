@@ -1,9 +1,6 @@
 <script setup>
 import {defineProps, ref, defineEmits} from "vue";
-// import axios from "axios";
-// import {useUserStore} from "@/stores/user";
 
-// const userStore = useUserStore();
 // 부모로부터 전달받은 item
 const props = defineProps({
   item: {
@@ -14,45 +11,27 @@ const props = defineProps({
 
 const isHeartClicked = ref(props.item.isFavorite);
 
-// const toggleHeartColor = async () => {
-//   isHeartClicked.value = false;
-//   try {
-//     const response = await axios.post(`/remove/${props.item.aptId}`, {
-//       headers: {
-//         Authorization: `Bearer ${userStore.authToken}`,
-//       }
-//     });
-//     console.log('즐겨찾기 취소 완료', response.data);
-//   } catch (error) {
-//     console.error('즐겨찾기 상태 변경 실패', error);
-//     isHeartClicked.value = true;
-//   }
-// };
-
-
 // 하트 클릭 시, 부모로 이벤트 전달
-const emit = defineEmits({
-  toggleFavorite: (item) => {
-    if (item && item.aptId) return true; // 아이템이 유효한지 확인 (optional)
-    return false; // 유효하지 않으면 false 반환
-  }
-});
+const emit = defineEmits(["toggleFavorite"]);
 const handleHeartClick = () => {
-  // 부모 컴포넌트에서 처리할 수 있도록 이벤트 전달
   emit("toggleFavorite", props.item);
 };
+
+
+// const aptImage = 'https://ic.zigbang.com/vp/BigData/16067/c2802a66d041e62f9b86b0fa748d37268272835b.jpg';
+
 </script>
 
 <template>
   <div class="item-box">
     <div class="item-pic">
       <img
-          src="https://images.unsplash.com/photo-1489936724440-afaf5a115ede?q=80&w=2051&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          :src="props.item.image ? `${props.item.imgUrl}?w=750&q=80&a=1` : ''"
           alt="AptImg"
-          style="width: 150px; height: 100%; border-radius: 10px;"/>
+          style="width: 100%; height: 100%; border-radius: 5px"/>
       <font-awesome-icon :icon="['fas', 'heart']" size="lg" class="heart-icon"
                          :style="{ color: isHeartClicked ? 'red' : 'white' }"
-                         @click="handleHeartClick" />
+                         @click.stop="handleHeartClick" />
     </div>
     <div class="item-info">
       <div class="dong">{{ props.item.local3 }}</div>
