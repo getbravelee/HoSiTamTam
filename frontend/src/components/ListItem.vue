@@ -26,7 +26,7 @@ const handleHeartClick = () => {
   <div class="item-box">
     <div class="item-pic">
       <img
-          :src="props.item.image ? `${props.item.imgUrl}?w=750&q=80&a=1` : ''"
+          :src="props.item.image ? `${props.item.image}?w=750&q=80&a=1` : ''"
           alt="AptImg"
           style="width: 100%; height: 100%; border-radius: 5px"/>
       <font-awesome-icon :icon="['fas', 'heart']" size="lg" class="heart-icon"
