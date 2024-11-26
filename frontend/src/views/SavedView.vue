@@ -26,7 +26,7 @@ const favoriteList = ref([]);
 const toggleFavorite = async (item) => {
   try {
     // 즐겨찾기 취소 API 호출
-    const response = await axios.post(`/favorites/remove/${item.aptId}`, {}, {
+    const response = await axios.delete(`/favorites/remove/${item.aptId}`, {}, {
       headers: {
         Authorization: `Bearer ${userStore.authToken}`,
       },
