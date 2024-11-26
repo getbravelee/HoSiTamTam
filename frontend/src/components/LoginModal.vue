@@ -49,7 +49,7 @@ const validatePassword = () => {
 };
 
 const validateRepeatPassword = () => {
-  if (password.value !== repeatPassword.value) {
+  if (signUpPassword.value !== repeatPassword.value) {
     errors.value.repeatPassword = '비밀번호가 일치하지 않습니다';
     return false;
   } else {
