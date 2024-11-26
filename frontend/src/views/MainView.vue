@@ -6,7 +6,6 @@ import axios from "axios";
 
 // 뉴스 데이터 불러오기
 const newsList = ref([]);
-const visibleNewsCount = ref(3);
 const fetchNews = async () => {
   try {
     const response = await axios.get('/news');
@@ -17,18 +16,33 @@ const fetchNews = async () => {
   }
 };
 
-const loadMoreNews = () => {
-  visibleNewsCount.value += 3; // 더보기 버튼 클릭 시 3개씩 증가
+const itemsPerPage = 3;
+const displayedNews = ref([]);
+const currentPage = ref(0);
+
+const loadMoreItems = () => {
+  const startIndex = currentPage.value * itemsPerPage;
+  const nextItems = newsList.value.slice(startIndex, startIndex + itemsPerPage);
+  displayedNews.value.push(...nextItems);
+  currentPage.value++;
 };
 
 // 날짜 포맷팅 함수
 const formatDate = (dateString) => {
   const date = new Date(dateString);
-  return date.toLocaleDateString('ko-KR'); // 한국 형식으로 날짜 표시 (yyyy-mm-dd)
+  return date.toLocaleDateString('ko-KR');
 };
 
 onMounted(() => {
   fetchNews();
+  const checkItemsReady = () => {
+    if (newsList.value.length > 0) {
+      loadMoreItems();
+    } else {
+      setTimeout(checkItemsReady, 100);  // 0.1초마다 확인
+    }
+  };
+  checkItemsReady();
 });
 </script>
 
@@ -41,9 +55,9 @@ onMounted(() => {
         <h3 class="section-title">📌 서비스 소개</h3>
         <div class="section-body">
           <ul class="service-list">
-            <li>동해물과 백두산이 마르고 닳도록</li>
-            <li>아리랑아라리요 다 이뤄지라</li>
-            <li>괭갈리는 바람</li>
+            <li>[부동산 최종 관통 프로젝트]</li>
+            <li>아파트의 상세 정보를 확인할 수 있는 프로젝트입니다.</li>
+            <li></li>
             <li>이수철은 수채모로라 천제</li>
             <li>매운 바람 옷을 없다</li>
             <li>명지 영도</li>
@@ -56,7 +70,7 @@ onMounted(() => {
         <div class="section-body">
           <div class="news-list">
             <!-- 뉴스 리스트 렌더링 -->
-            <div v-for="news in newsList" :key="news.id" class="news-box">
+            <div v-for="news in displayedNews" :key="news.id" class="news-box">
               <a :href="news.url" target="_blank" class="news-title title">
                 {{ news.title }}
               </a>
@@ -65,7 +79,7 @@ onMounted(() => {
               </div>
             </div>
           </div>
-          <button v-if="visibleNewsCount < newsList.length" @click="loadMoreNews" class="more-btn">
+          <button v-if="displayedNews.length < newsList.length" class="more-btn" @click="loadMoreItems">
             더보기
             <font-awesome-icon :icon="['fas', 'angle-down']" />
           </button>
@@ -89,18 +103,22 @@ onMounted(() => {
                 </div>
               </div>
             </RouterLink>
-            <div class="section-body carousel-item">
-              <div class="notice-box">
-                <div class="notice-title title" title>서비스 출시</div>
-                <div class="notice-info info">2024.12.25</div>
+            <RouterLink :to="{ name: 'notice' }" class="no-decoration">
+              <div class="section-body carousel-item active">
+                <div class="notice-box">
+                  <div class="notice-title title" title>개인정보처리방침 개정 안내</div>
+                  <div class="notice-info info">2024.11.01</div>
+                </div>
               </div>
-            </div>
-            <div class="section-body carousel-item">
-              <div class="notice-box">
-                <div class="notice-title title" title>서비스 업데이트 안내</div>
-                <div class="notice-info info">2024.11.27</div>
+            </RouterLink>
+            <RouterLink :to="{ name: 'notice' }" class="no-decoration">
+              <div class="section-body carousel-item active">
+                <div class="notice-box">
+                  <div class="notice-title title" title>개인정보처리방침 개정 안내</div>
+                  <div class="notice-info info">2024.11.01</div>
+                </div>
               </div>
-            </div>
+            </RouterLink>
           </div>
 
         </div>
@@ -120,6 +138,11 @@ onMounted(() => {
   background-color: #EBF2FC;
   height: calc(100vh - 65px);
   overflow-y: auto;
+  -ms-overflow-style: none;
+}
+
+.body-container::-webkit-scrollbar {
+  display: none;
 }
 
 .section {
