@@ -1,5 +1,35 @@
 <script setup>
 import SearchBar from "@/components/SearchBar.vue";
+import {onMounted, ref} from "vue";
+import axios from "axios";
+
+
+// 뉴스 데이터 불러오기
+const newsList = ref([]);
+const visibleNewsCount = ref(3);
+const fetchNews = async () => {
+  try {
+    const response = await axios.get('/news');
+    newsList.value = response.data;
+    console.log(response.data);
+  } catch (error) {
+    console.error('뉴스 데이터를 가져오는 데 실패했습니다:', error);
+  }
+};
+
+const loadMoreNews = () => {
+  visibleNewsCount.value += 3; // 더보기 버튼 클릭 시 3개씩 증가
+};
+
+// 날짜 포맷팅 함수
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('ko-KR'); // 한국 형식으로 날짜 표시 (yyyy-mm-dd)
+};
+
+onMounted(() => {
+  fetchNews();
+});
 </script>
 
 <template>
@@ -25,20 +55,17 @@ import SearchBar from "@/components/SearchBar.vue";
         <h3 class="section-title">📰 뉴스</h3>
         <div class="section-body">
           <div class="news-list">
-            <div class="news-box">
-              <div class="news-title title">마포 새 아파트 잡겠다고 여섯 식구가 집 없이 15년 버텼다</div>
-              <div class="news-info info">한국경제 | 한 달 전</div>
-            </div>
-            <div class="news-box">
-              <div class="news-title title">자그마치 5000가구 새 아파트 강북 최대 재건축 속도 붙었다 [부동산360]</div>
-              <div class="news-info info">헤럴드경제 | 19일 전</div>
-            </div>
-            <div class="news-box">
-              <div class="news-title title">“서울 집값 오른다는데” 지금 사려면 '이것' 알아야 합니다 [더 머니이스트]</div>
-              <div class="news-info info">한국경제 | 21일 전</div>
+            <!-- 뉴스 리스트 렌더링 -->
+            <div v-for="news in newsList" :key="news.id" class="news-box">
+              <a :href="news.url" target="_blank" class="news-title title">
+                {{ news.title }}
+              </a>
+              <div class="news-info info">
+                {{ formatDate(news.newsDate) }} | 추천수 {{ news.recommendation }}
+              </div>
             </div>
           </div>
-          <button class="more-btn">
+          <button v-if="visibleNewsCount < newsList.length" @click="loadMoreNews" class="more-btn">
             더보기
             <font-awesome-icon :icon="['fas', 'angle-down']" />
           </button>
@@ -138,6 +165,14 @@ import SearchBar from "@/components/SearchBar.vue";
   height: 74px;
   border-bottom: 1px #d7d7d7 solid;
   margin-bottom: 13px;
+}
+
+.news-title {
+  all: unset;
+}
+
+.news-title:hover {
+  text-decoration: underline;
 }
 
 .title {
