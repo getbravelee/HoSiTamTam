@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, reactive, ref, watch} from "vue";
+import { onMounted, reactive, ref, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import SearchBar from "@/components/SearchBar.vue";
 import ListItem from "@/components/ListItem.vue";
@@ -7,6 +7,8 @@ import {MultiSlider} from 'vue3-multi-slider';
 import {usePlaceStore} from "@/stores/place";
 import axios from "axios";
 import {useUserStore} from "@/stores/user";
+import {useAptListStore} from "@/stores/apt";
+import {eventBus} from "@/eventBus/eventBus";
 
 const route = useRoute();
 const router = useRouter();
@@ -115,6 +117,7 @@ const goToMap = () => {
 
 // 아파트 리스트
 const userStore = useUserStore();
+const aptListStore = useAptListStore();
 const aptList = ref([]);
 const fetchAptList = async () => {
   try {
@@ -131,6 +134,8 @@ const fetchAptList = async () => {
 
     const response = await axios.get(`/region/${region}`, {params});
     const apartmentList = response.data;
+    eventBus.emit('aptList', aptList.value); // 'aptList' 이벤트 발생
+    aptListStore.setAptList(response.data);
     console.log(response.data);
     // 각 아파트의 즐겨찾기 상태 확인
     if (userStore.isLogin) {
