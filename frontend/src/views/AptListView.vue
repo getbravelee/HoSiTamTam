@@ -6,6 +6,7 @@ import ListItem from "@/components/ListItem.vue";
 import {MultiSlider} from 'vue3-multi-slider';
 import {usePlaceStore} from "@/stores/place";
 import axios from "axios";
+import {useUserStore} from "@/stores/user";
 
 const route = useRoute();
 const router = useRouter();
@@ -109,29 +110,71 @@ const goBack = () => {
 }
 
 const goToMap = () => {
-  router.push({ name: 'map' });
+  router.push({name: 'map'});
 };
 
 // 아파트 리스트
+const userStore = useUserStore();
 const aptList = ref([]);
 const fetchAptList = async () => {
   try {
     const params = {
-      areaMin: area["Category 1"].value,
-      areaMax: area["Category 2"].value + area["Category 1"].value,
-      priceMin: (price["Category 1"].value * 10000),
-      priceMax: (price["Category 2"].value * 10000) + (price["Category 1"].value * 10000),
+      areaMin: area["Category 1"].value * 100000,
+      areaMax: (area["Category 2"].value * 100000) + (area["Category 1"].value * 100000),
+      priceMin: (price["Category 1"].value * 100000),
+      priceMax: (price["Category 2"].value * 100000) + (price["Category 1"].value * 100000),
     };
 
     if (tab.value !== 'all') {
       params.type = tab.value;
     }
 
-    const response = await axios.get(`/region/${region}`, { params });
+    const response = await axios.get(`/region/${region}`, {params});
+    const apartmentList = response.data;
     console.log(response.data);
-    aptList.value = response.data;
+    // 각 아파트의 즐겨찾기 상태 확인
+    if (userStore.isLogin) {
+      for (let apt of apartmentList) {
+        const favoriteResponse = await axios.get(`/favorites/isFavorite/${apt.aptId}`, {
+          headers: {Authorization: `Bearer ${userStore.authToken}`,}
+        });
+        console.log("좋아요 여부 응답" + favoriteResponse.data);
+        apt.isFavorite = favoriteResponse.data;
+      }
+    }
+    aptList.value = apartmentList;
   } catch (error) {
     console.error('아파트 목록 조회 실패:', error);
+  }
+};
+
+// 즐겨찾기 상태 변경
+const toggleFavorite = async (item) => {
+  if (!userStore.isLogin) {
+    alert('로그인이 필요합니다.');
+    return;
+  }
+
+  try {
+    const response = await axios.get(`/favorites/isFavorite/${item.aptId}`, {
+      headers: {Authorization: `Bearer ${userStore.authToken}`,}
+    });
+
+    if (response.data) {
+      await axios.delete(`/favorites/remove/${item.aptId}`, {
+        headers: {Authorization: `Bearer ${userStore.authToken}`,}
+      });
+      item.isFavorite = false;
+    } else {
+      await axios.post(`/favorites/add/${item.aptId}`, {}, {
+        headers: {Authorization: `Bearer ${userStore.authToken}`,}
+      });
+      item.isFavorite = true;
+    }
+
+    // await fetchAptList();
+  } catch (error) {
+    console.error('즐겨찾기 상태 변경 실패:', error);
   }
 };
 
@@ -206,10 +249,9 @@ onMounted(() => {
       </div>
 
       <div class="result-list">
-        <ListItem v-for="(item) in aptList" :key="item.aptId" :item="item" @click="goToApartmentDetail(item.aptId, item.aptName, item.lat, item.lng)"/>
-<!--        <ListItem @click="goToApartmentDetail(1, 36.6022672822298, 126.648860632918)"/>-->
-<!--        <ListItem @click="goToApartmentDetail(2)"/>-->
-<!--        <ListItem @click="goToApartmentDetail(3)"/>-->
+        <ListItem v-for="(item) in aptList" :key="item.aptId" :item="item"
+                  @click="goToApartmentDetail(item.aptId, item.aptName, item.lat, item.lng)"
+                  @toggleFavorite="toggleFavorite"/>
       </div>
     </div>
   </div>
@@ -308,6 +350,6 @@ input[type="range"] {
 }
 
 ::v-deep(.range-slider) {
-  margin: 10px 0;
+  margin: 10px 0 !important;
 }
 </style>

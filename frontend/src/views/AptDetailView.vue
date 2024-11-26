@@ -284,7 +284,7 @@ onMounted(() => {
   fetchAptDetail();
 });
 
-const aptImage = 'https://ic.zigbang.com/vp/BigData/16067/c2802a66d041e62f9b86b0fa748d37268272835b.jpg';
+// const aptImage = 'https://ic.zigbang.com/vp/BigData/16067/c2802a66d041e62f9b86b0fa748d37268272835b.jpg';
 
 </script>
 
@@ -345,7 +345,7 @@ const aptImage = 'https://ic.zigbang.com/vp/BigData/16067/c2802a66d041e62f9b86b0
           <div class="info-title">📝아파트 정보</div>
           <div>
             <img
-                :src="aptImage ? `${aptImage}?w=750&q=80&a=1` : ''"
+                :src="aptDetail.imageUrl ? `${aptDetail.imageUrl}?w=750&q=80&a=1` : ''"
                 alt="AptImg"
                 style="width: 100%; height: 100%; border-radius: 5px"/>
             <div class="apt-info">
