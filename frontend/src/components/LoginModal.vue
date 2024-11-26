@@ -132,9 +132,11 @@ function handleSignIn() {
       userStore.setAuthToken(response.data.data);
       emit('closeModal');
     } else {
+      alert("로그인 실패");
       console.log(response.data.msg);
     }
   }).catch((error) => {
+    alert("로그인 실패");
     console.log(error.message);
   })
 }
