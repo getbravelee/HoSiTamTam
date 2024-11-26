@@ -41,14 +41,16 @@ const handleMouseMove = (e) => {
 };
 
 onMounted(() => {
+  // 상권 정보
   const checkItemsReady = () => {
     if (categoryItems.value.length > 0) {
-      loadMoreItems();  // 처음 3개 아이템을 로드
+      loadMoreItems();
     } else {
       setTimeout(checkItemsReady, 100);  // 0.1초마다 확인
     }
   };
   checkItemsReady();
+  // 마우스 위치
   const container = focusOption.value;
   if (container) {
     container.addEventListener('mousemove', handleMouseMove);
