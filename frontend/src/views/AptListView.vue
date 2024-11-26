@@ -119,8 +119,8 @@ const fetchAptList = async () => {
     const params = {
       areaMin: area["Category 1"].value,
       areaMax: area["Category 2"].value + area["Category 1"].value,
-      priceMin: price["Category 1"].value,
-      priceMax: price["Category 2"].value + price["Category 1"].value,
+      priceMin: (price["Category 1"].value * 10000),
+      priceMax: (price["Category 2"].value * 10000) + (price["Category 1"].value * 10000),
     };
 
     if (tab.value !== 'all') {
