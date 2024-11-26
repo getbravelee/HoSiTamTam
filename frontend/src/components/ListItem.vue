@@ -1,5 +1,5 @@
 <script setup>
-import {defineProps, ref, defineEmits} from "vue";
+import {defineProps, defineEmits} from "vue";
 
 // 부모로부터 전달받은 item
 const props = defineProps({
@@ -9,7 +9,7 @@ const props = defineProps({
   }
 });
 
-const isHeartClicked = ref(props.item.isFavorite);
+// const isHeartClicked = ref(props.item.isFavorite);
 
 // 하트 클릭 시, 부모로 이벤트 전달
 const emit = defineEmits(["toggleFavorite"]);
@@ -30,7 +30,7 @@ const handleHeartClick = () => {
           alt="AptImg"
           style="width: 100%; height: 100%; border-radius: 5px"/>
       <font-awesome-icon :icon="['fas', 'heart']" size="lg" class="heart-icon"
-                         :style="{ color: isHeartClicked ? 'red' : 'white' }"
+                         :style="{ color: props.item.isFavorite ? 'red' : 'white' }"
                          @click.stop="handleHeartClick" />
     </div>
     <div class="item-info">

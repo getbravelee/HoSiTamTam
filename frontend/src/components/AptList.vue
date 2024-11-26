@@ -1,59 +1,82 @@
 <template>
   <div>
-    <input
-        type="text"
-        v-model="query"
-        @input="fetchApts"
-        placeholder="검색어 입력"
-    />
-    <table v-if="apts.length" border="1">
-      <thead>
-      <tr>
-        <th>id</th>
-        <th>아파트 이름</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-for="apt in apts" :key="apt.id" @click="selectApt(apt)">
-        <td>{{ apt.id }}</td>
-        <td>{{ apt.aptName }}</td>
-      </tr>
-      </tbody>
-    </table>
+    <SearchBar :value="query" @results="updateResults" :backgroundColor="'#293A67'" />
+    <div class="result-list">
+      <ListItem
+          v-for="item in aptList"
+          :key="item.aptId"
+          :item="item"
+          @toggleFavorite="toggleFavorite"
+      />
+    </div>
   </div>
 </template>
 
-<script>
-import axios from 'axios';
+<script setup>
+import { ref, watch, onMounted } from "vue";
+import axios from "axios";
+import ListItem from "@/components/ListItem.vue";
+import { useUserStore } from "@/stores/user";
 
-export default {
-  data() {
-    return {
-      query: '',
-      apts: []
-    };
-  },
-  methods: {
-    fetchApts() {
-      if (this.query.length > 1) {
-        axios
-            .get(`/region/${this.query}`)
-            .then(response => {
-              this.apts = response.data; // 서버에서 받은 결과를 상태에 저장
-            })
-            .catch(error => {
-              console.error("Error fetching apts:", error);
-            });
-      } else {
-        this.apts = [];
+const userStore = useUserStore();
+const aptList = ref([]);
+
+const fetchAptList = async () => {
+  try {
+    const response = await axios.get(`/region/${region}`, {
+      params: {
+        query: query.value
       }
-    },
-    selectApt(apt) {
-      this.query = apt.aptName; // 선택한 제안으로 검색어 업데이트
-      this.apts = []; // 제안 목록 비우기
+    });
+    aptList.value = response.data;
+
+    // 로그인한 상태라면 즐겨찾기 상태를 반영
+    if (userStore.isLogin) {
+      for (let apt of aptList.value) {
+        const favoriteResponse = await axios.get(`/favorites/isFavorite/${apt.aptId}`, {
+          headers: { Authorization: `Bearer ${userStore.authToken}` }
+        });
+        apt.isFavorite = favoriteResponse.data;
+      }
     }
+  } catch (error) {
+    console.error('아파트 목록 조회 실패:', error);
   }
 };
+
+// 즐겨찾기 상태 변경
+const toggleFavorite = async (item) => {
+  if (!userStore.isLogin) {
+    alert('로그인이 필요합니다.');
+    return;
+  }
+
+  try {
+    const response = await axios.get(`/favorites/isFavorite/${item.aptId}`, {
+      headers: { Authorization: `Bearer ${userStore.authToken}` }
+    });
+
+    if (response.data) {
+      await axios.delete(`/favorites/remove/${item.aptId}`, {
+        headers: { Authorization: `Bearer ${userStore.authToken}` }
+      });
+      item.isFavorite = false; // 상태 변경
+    } else {
+      await axios.post(`/favorites/add/${item.aptId}`, {}, {
+        headers: { Authorization: `Bearer ${userStore.authToken}` }
+      });
+      item.isFavorite = true; // 상태 변경
+    }
+  } catch (error) {
+    console.error('즐겨찾기 상태 변경 실패:', error);
+  }
+};
+
+watch([() => query.value], fetchAptList);
+
+onMounted(() => {
+  fetchAptList();
+});
 </script>
 
 <style scoped>
