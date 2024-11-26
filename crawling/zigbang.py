@@ -93,7 +93,7 @@ def makeCSV(fileName, dataList):
 start_time = time.time()
 
 # geohash 설정
-geohash = ['wyd']
+geohash = ['wy6']
 totalGeohash = []
 for i in geohash:
     tmp4Lv = getHigherGeohash(i)
@@ -105,7 +105,7 @@ all_apartment_data = []  # 모든 아파트 정보를 저장할 리스트
 
 # 아파트 정보 가져오기
 for i in totalGeohash:
-    DanㅌjiListPerGeohash = getDanjiList(i)
+    DanjiListPerGeohash = getDanjiList(i)
     for j in DanjiListPerGeohash:
         apt_info = getAptInfoData(j)
         if apt_info:  # 아파트 정보가 있는 경우
@@ -113,7 +113,7 @@ for i in totalGeohash:
 
 # 마지막에 모든 아파트 정보를 CSV 파일로 저장
 if all_apartment_data:
-    makeCSV("wyd.csv", all_apartment_data)
+    makeCSV("wy6.csv", all_apartment_data)
 else:
     print("No apartment data found.")
 
