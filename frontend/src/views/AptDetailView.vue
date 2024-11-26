@@ -5,6 +5,7 @@ import {useRoute, useRouter} from "vue-router";
 import CommentItem from "@/components/CommentItem.vue";
 import {useUserStore} from "@/stores/user";
 import {usePlaceStore} from "@/stores/place";
+import axios from "axios";
 
 const route = useRoute();
 const aptName = ref(history.state.aptName || '');
@@ -40,6 +41,16 @@ const handleMouseMove = (e) => {
 };
 
 onMounted(() => {
+  // 상권 정보
+  const checkItemsReady = () => {
+    if (categoryItems.value.length > 0) {
+      loadMoreItems();
+    } else {
+      setTimeout(checkItemsReady, 100);  // 0.1초마다 확인
+    }
+  };
+  checkItemsReady();
+  // 마우스 위치
   const container = focusOption.value;
   if (container) {
     container.addEventListener('mousemove', handleMouseMove);
@@ -77,6 +88,56 @@ const moveSchoolInfo = () => {
 const moveAptReview = () => {
   aptReviewSection.value.scrollIntoView({behavior: "smooth"});
 }
+
+// 실거래가 정보
+const apartmentContracts = ref([
+  { contractDate: '22.04.22', price: '22.4억', area: '57.7평', total: 11 },
+  { contractDate: '23.05.18', price: '25.5억', area: '65.3평', total: 8 },
+  { contractDate: '21.12.10', price: '20.8억', area: '50.4평', total: 15 },
+  { contractDate: '22.07.05', price: '23.7억', area: '60.2평', total: 9 },
+  { contractDate: '23.02.15', price: '21.3억', area: '55.0평', total: 12 },
+  { contractDate: '23.01.07', price: '26.0억', area: '68.4평', total: 7 },
+  { contractDate: '22.09.10', price: '24.1억', area: '62.1평', total: 10 },
+  { contractDate: '21.11.25', price: '19.5억', area: '49.9평', total: 14 },
+  { contractDate: '22.06.30', price: '23.0억', area: '59.5평', total: 13 },
+  { contractDate: '21.10.14', price: '18.7억', area: '48.7평', total: 16 },
+  { contractDate: '23.03.22', price: '28.2억', area: '72.3평', total: 6 },
+  { contractDate: '23.04.01', price: '22.9억', area: '61.2평', total: 10 },
+  { contractDate: '23.03.22', price: '28.2억', area: '72.3평', total: 6 },
+  { contractDate: '23.04.01', price: '22.9억', area: '61.2평', total: 10 }
+]);
+
+
+const currentIndex = ref(5);
+const displayedTrades = ref(apartmentContracts.value.slice(0, currentIndex.value));
+const toggleButtonText = ref("더보기");
+const toggleIcon = ref(["fas", "angle-down"]);
+const canToggle = ref(true);
+
+const toggleView = () => {
+  if (toggleButtonText.value === "더보기") {
+    const rowsToAdd = Math.min(5, apartmentContracts.value.length - currentIndex.value);
+    if (rowsToAdd > 0) {
+      const additionalRows = apartmentContracts.value.slice(currentIndex.value, currentIndex.value + rowsToAdd);
+      displayedTrades.value.push(...additionalRows);
+    }
+
+    currentIndex.value += rowsToAdd;
+    if (currentIndex.value >= apartmentContracts.value.length) {
+      canToggle.value = false;
+    }
+
+    toggleButtonText.value = "접기";
+    toggleIcon.value = ["fas", "angle-up"];
+  } else {
+    displayedTrades.value = apartmentContracts.value.slice(0, 5);
+    currentIndex.value = 5;
+    toggleButtonText.value = "더보기";
+    toggleIcon.value = ["fas", "angle-down"];
+    canToggle.value = true;
+  }
+};
+
 
 // 학교 정보 관련
 const tabs = ['초등학교', '중학교', '고등학교'];
@@ -192,9 +253,6 @@ const categoryItems = computed(() => {
   return allItems;
 });
 
-onMounted(() => {
-  loadMoreItems();
-});
 
 const loadMoreItems = () => {
   const startIndex = currentPage.value * itemsPerPage;
@@ -206,6 +264,28 @@ const loadMoreItems = () => {
 const formatNumber = (value) => {
   return new Intl.NumberFormat().format(value);
 };
+
+
+// 아파트 상세 정보 API 호출 함수
+const aptId = ref(route.params.aptId);
+const aptDetail = ref(null);
+
+const fetchAptDetail = async () => {
+  try {
+    const response = await axios.get(`/apt/${aptId.value}`);
+    aptDetail.value = response.data;
+    console.log(aptDetail.value);
+  } catch (error) {
+    console.error('Failed to fetch apartment details:', error);
+  }
+};
+
+onMounted(() => {
+  fetchAptDetail();
+});
+
+const aptImage = 'https://ic.zigbang.com/vp/BigData/16067/c2802a66d041e62f9b86b0fa748d37268272835b.jpg';
+
 </script>
 
 <template>
@@ -247,41 +327,17 @@ const formatNumber = (value) => {
             </tr>
             </thead>
             <tbody>
-            <tr>
-              <td>22.04.22</td>
-              <td>22.4억</td>
-              <td>57.7평</td>
-              <td>11</td>
-            </tr>
-            <tr>
-              <td>22.03.21</td>
-              <td>33.3억</td>
-              <td>51.4평</td>
-              <td>14</td>
-            </tr>
-            <tr>
-              <td>22.01.18</td>
-              <td>32억</td>
-              <td>50.4평</td>
-              <td>7</td>
-            </tr>
-            <tr>
-              <td>21.05.17</td>
-              <td>31.6억</td>
-              <td>50.4평</td>
-              <td>5</td>
-            </tr>
-            <tr>
-              <td>21.05.12</td>
-              <td>33억</td>
-              <td>51.4평</td>
-              <td>11</td>
-            </tr>
+              <tr v-for="(contract, index) in displayedTrades" :key="index">
+                <td>{{ contract.contractDate }}</td>
+                <td>{{ contract.price }}</td>
+                <td>{{ contract.area }}</td>
+                <td>{{ contract.total }}</td>
+              </tr>
             </tbody>
           </table>
-          <button class="more-btn">
-            더보기
-            <font-awesome-icon :icon="['fas', 'angle-down']"/>
+          <button class="more-btn" v-if="canToggle" @click="toggleView">
+            {{ toggleButtonText }}
+            <font-awesome-icon :icon="toggleIcon" />
           </button>
         </div>
         <!-- 아파트 정보 -->
@@ -289,23 +345,23 @@ const formatNumber = (value) => {
           <div class="info-title">📝아파트 정보</div>
           <div>
             <img
-                src="https://images.unsplash.com/photo-1489936724440-afaf5a115ede?q=80&w=2051&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                :src="aptImage ? `${aptImage}?w=750&q=80&a=1` : ''"
                 alt="AptImg"
                 style="width: 100%; height: 100%; border-radius: 5px"/>
             <div class="apt-info">
               <ul>
-                <li>아파트</li>
-                <li>2012년 6월 (13년차)</li>
-                <li>최고 10층</li>
-                <li>건폐율 22%</li>
-                <li>지역난방</li>
+                <li>{{ aptDetail.constructionCompany }}</li>
+                <li>사용승인일 {{ aptDetail.usageApprovalDate }}</li>
+                <li>최고 {{ aptDetail.maxFloors }}층</li>
+                <li>건폐율 {{ aptDetail.buildingCoverageRatio }}%</li>
+                <li>가구당주차대수 {{ aptDetail.parkingPerUnit }}</li>
               </ul>
               <ul>
-                <li>414세대</li>
-                <li>17개동</li>
-                <li>용적률 126%</li>
-                <li>계단식</li>
-                <li>열병합</li>
+                <li>{{ aptDetail.totalUnits }}세대</li>
+                <li>{{ aptDetail.totalBuildings }}개동</li>
+                <li>용적률 {{ aptDetail.floorAreaRatio }}%</li>
+                <li>{{ aptDetail.heatingFuel }}</li>
+                <li>총주차대수 {{ aptDetail.totalParking }}</li>
               </ul>
             </div>
           </div>
@@ -334,27 +390,6 @@ const formatNumber = (value) => {
                 </div>
               </div>
             </div>
-<!--            <div class="shop-item">-->
-<!--              <div class="shop-icon">🛍️</div>-->
-<!--              <div class="shop-details">-->
-<!--                <div class="shop-name">스타필드 (스타필드시티명지)</div>-->
-<!--                <div class="shop-distance">1.3km, 5분 거리</div>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--            <div class="shop-item">-->
-<!--              <div class="shop-icon">🌳</div>-->
-<!--              <div class="shop-details">-->
-<!--                <div class="shop-name">남명공원 (테니스장 5.7배)</div>-->
-<!--                <div class="shop-distance">14m, 1분 거리</div>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--            <div class="shop-item">-->
-<!--              <div class="shop-icon">⚽</div>-->
-<!--              <div class="shop-details">-->
-<!--                <div class="shop-name">명지공원 (축구장 23.9배)</div>-->
-<!--                <div class="shop-distance">563m, 2분 거리</div>-->
-<!--              </div>-->
-<!--            </div>-->
           </div>
           <button v-if="visibleItems.length < categoryItems.length" class="more-btn" @click="loadMoreItems">
             더보기

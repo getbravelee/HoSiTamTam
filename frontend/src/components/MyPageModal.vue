@@ -1,18 +1,40 @@
 <script setup>
 // import {useUserStore} from "@/stores/user";
-import {defineEmits, ref, watch} from "vue";
+import {defineEmits, onMounted, ref, watch} from "vue";
+import axios from "axios";
+import {useUserStore} from "@/stores/user";
 
 // const userStore = useUserStore();
 const emit = defineEmits(['closeModal']);
 
 const username = ref('');
 const id = ref('');
-const password = ref('');
 const email = ref('');
 const errors = ref({
   username: ''
 });
 
+// 사용자 정보 불러오는 함수
+const userStore = useUserStore();
+
+const fetchUserInfo = async () => {
+  try {
+    const response = await axios.get('/auth/detail', {
+      headers: {
+        Authorization: `Bearer ${userStore.authToken}`,
+      },
+    });
+    const userInfo = response.data.data;  // API 응답에서 userInfo를 가져옴
+    console.log(userInfo);
+    id.value = userInfo.userLoginId; // userLoginId -> id
+    username.value = userInfo.userNickname; // userNickname -> username
+    email.value = userInfo.userEmail; // userEmail -> email
+  } catch (error) {
+    console.error("사용자 정보 불러오기 실패", error);
+  }
+};
+
+// 닉네임 유효성 검사
 const validateUsername = () => {
   if (username.value.trim() === '') {
     errors.value.username = '사용자 이름을 입력해주세요';
@@ -28,14 +50,48 @@ watch([username], () => {
 });
 
 // 프로필 수정
-function handleSaved() {
+const handleSaved = async () => {
+  if (!validateUsername()) return;
 
-}
+  try {
+    const response = await axios.post('/auth/detail/update', {
+      userLoginId: id.value,
+      userNickname: username.value,
+      userEmail: email.value,
+    }, {
+      headers: {
+        Authorization: `Bearer ${userStore.authToken}`,
+      }
+    });
+    console.log(response.data);
+    alert("닉네임 변경 성공");
+  } catch (error) {
+    console.error("프로필 수정 실패", error);
+  }
+};
 
 // 회원 탈퇴
-function handleDelete() {
+const handleDelete = async () => {
+  if (confirm("정말로 회원 탈퇴를 하시겠습니까?")) {
+    try {
+      const response = await axios.post('/auth/delete', {}, {
+        headers: {
+          Authorization: `Bearer ${userStore.authToken}`,
+        }
+      });
+      console.log(response.data);
+      alert("회원 탈퇴 성공");
+      userStore.removeAuthToken();
+      emit('closeModal');
+    } catch (error) {
+      console.error("회원 탈퇴 실패", error);
+    }
+  }
+};
 
-}
+onMounted(() => {
+  fetchUserInfo();
+});
 </script>
 
 <template>
@@ -57,7 +113,7 @@ function handleDelete() {
           </div>
           <div class="group">
             <label for="pass" class="label">Password</label>
-            <input v-model="password" id="pass" type="password" class="input" readonly />
+            <input id="pass" type="password" class="input" value="12341234" readonly />
           </div>
           <div class="group">
             <label for="email" class="label">Email Address</label>
@@ -92,7 +148,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 2000;
 }
 
 .my-page-wrap {

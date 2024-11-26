@@ -1,17 +1,18 @@
 <script setup>
-import {reactive, ref, watch} from "vue";
+import {onMounted, reactive, ref, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import SearchBar from "@/components/SearchBar.vue";
 import ListItem from "@/components/ListItem.vue";
 import {MultiSlider} from 'vue3-multi-slider';
 import {usePlaceStore} from "@/stores/place";
+import axios from "axios";
 
 const route = useRoute();
 const router = useRouter();
 const region = route.params.region;
 const query = ref(route.query.query || '');
 const results = ref(history.state.results || '[]');
-
+const dongName = ref(route.query.dongName || '');
 const tab = ref('all');
 
 watch(() => route.query.query, (newQuery) => {
@@ -29,7 +30,7 @@ const price = reactive({
     'text_color': '#ffffff'
   },
   'Category 2': {
-    'value': 30,
+    'value': 40,
     'background_color': '#271f7a',
     'text_color': '#ffffff'
   },
@@ -78,22 +79,27 @@ const placesSearchCB = (data, status) => {
   }
 };
 
-
-const goToApartmentDetail = async (apartmentId, lat, lng) => {
+const goToApartmentDetail = (apartmentId, aptName, lat, lng) => {
   // 카테고리 별 정보 가져오기
   placesStore.resetPlaceData();
 
   for (let category of categories.value) {
-    await searchPlaces(category.id, lat, lng);
+    searchPlaces(category.id, lat, lng);
   }
 
   console.log(placesStore.placesData);
 
-  const data = results.value.map(item => item);
+  // const data = results.value.map(item => item);
+  // router.push({
+  //   name: 'aptDetail',
+  //   params: {query, region, aptId: apartmentId},
+  //   state: {aptName: aptName, results: data}
+  // });
+
   router.push({
     name: 'aptDetail',
     params: {query, region, aptId: apartmentId},
-    state: {aptName: '명지삼정그린코아', results: data}
+    state: {aptName: aptName}
   });
 };
 
@@ -105,6 +111,40 @@ const goBack = () => {
 const goToMap = () => {
   router.push({ name: 'map' });
 };
+
+// 아파트 리스트
+const aptList = ref([]);
+const fetchAptList = async () => {
+  try {
+    const params = {
+      areaMin: area["Category 1"].value,
+      areaMax: area["Category 2"].value + area["Category 1"].value,
+      priceMin: (price["Category 1"].value * 10000),
+      priceMax: (price["Category 2"].value * 10000) + (price["Category 1"].value * 10000),
+    };
+
+    if (tab.value !== 'all') {
+      params.type = tab.value;
+    }
+
+    const response = await axios.get(`/region/${region}`, { params });
+    console.log(response.data);
+    aptList.value = response.data;
+  } catch (error) {
+    console.error('아파트 목록 조회 실패:', error);
+  }
+};
+
+// 필터링 변경 시 실행
+watch([() => price["Category 1"].value, () => price["Category 2"].value,
+  () => area["Category 1"].value, () => area["Category 2"].value,
+  () => tab.value], () => {
+  fetchAptList();
+});
+
+onMounted(() => {
+  fetchAptList();
+});
 </script>
 
 <template>
@@ -112,7 +152,7 @@ const goToMap = () => {
     <SearchBar :value="query" @results="updateResults" :backgroundColor="'#293A67'"/>
     <div class="result-bar">
       <font-awesome-icon :icon="['fas', 'arrow-left']" size="lg" @click="goBack()"/>
-      {{ region }}
+      {{ dongName }}
       <font-awesome-icon :icon="['fas', 'xmark']" size="xl" @click="goToMap()"/>
     </div>
 
@@ -166,9 +206,10 @@ const goToMap = () => {
       </div>
 
       <div class="result-list">
-        <ListItem @click="goToApartmentDetail(1, 36.6022672822298, 126.648860632918)"/>
-        <ListItem @click="goToApartmentDetail(2)"/>
-        <ListItem @click="goToApartmentDetail(3)"/>
+        <ListItem v-for="(item) in aptList" :key="item.aptId" :item="item" @click="goToApartmentDetail(item.aptId, item.aptName, item.lat, item.lng)"/>
+<!--        <ListItem @click="goToApartmentDetail(1, 36.6022672822298, 126.648860632918)"/>-->
+<!--        <ListItem @click="goToApartmentDetail(2)"/>-->
+<!--        <ListItem @click="goToApartmentDetail(3)"/>-->
       </div>
     </div>
   </div>

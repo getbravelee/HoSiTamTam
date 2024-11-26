@@ -17,9 +17,9 @@
     </div>
     <!-- 결과 목록 -->
     <div v-if="showResults && results.length" class="search-results" @mousedown="onResultClick">
-      <!--      <ul>-->
-      <!--        <li v-for="(result, index) in results" :key="index" @click="selectSuggestion(result)">{{ result }}</li>-->
-      <!--      </ul>-->
+<!--      <ul>-->
+<!--        <li v-for="(result, index) in results" :key="index" @click="selectSuggestion(result)">{{ result }}</li>-->
+<!--      </ul>-->
       <ul>
         <li v-for="(result) in results" :key="result.id" @click="selectSuggestion(result)">{{ result.dongName }}</li>
       </ul>
@@ -129,8 +129,8 @@ export default {
       // const data = results.value.map(item => item);
       router.push({
         name: 'aptList',
-        params: {region: result.bcode},
-        query: {query: query.value, dongName: result.dongName},
+        params: { region: result.bcode },
+        query: { query: query.value, dongName: result.dongName },
         // state: { results: data },
       });
 

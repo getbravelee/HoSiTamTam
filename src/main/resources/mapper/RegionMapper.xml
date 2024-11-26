@@ -20,10 +20,10 @@
         FROM apartment
         WHERE bcode = #{bcode}
         <if test="areaMin != null and areaMax != null">
-            AND area BETWEEN #{areaMin} AND #{areaMax}
+            AND minSalesPrice BETWEEN #{areaMin} AND #{areaMax}
         </if>
         <if test="priceMin != null and priceMax != null">
-            AND price BETWEEN #{priceMin} AND #{priceMax}
+            AND maxSalesPrice BETWEEN #{priceMin} AND #{priceMax}
         </if>
         <if test="type != null">
             AND type = #{type}

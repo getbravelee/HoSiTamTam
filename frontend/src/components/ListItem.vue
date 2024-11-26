@@ -1,9 +1,9 @@
 <script setup>
-import {defineProps, ref, emit} from "vue";
-import axios from "axios";
-import {useUserStore} from "@/stores/user";
+import {defineProps, ref, defineEmits} from "vue";
+// import axios from "axios";
+// import {useUserStore} from "@/stores/user";
 
-const userStore = useUserStore();
+// const userStore = useUserStore();
 // 부모로부터 전달받은 item
 const props = defineProps({
   item: {
@@ -14,20 +14,32 @@ const props = defineProps({
 
 const isHeartClicked = ref(props.item.isFavorite);
 
-const toggleHeartColor = async () => {
-  isHeartClicked.value = false;
-  try {
-    const response = await axios.delete(`/favorites/remove/${props.item.aptId}`, {
-      headers: {
-        Authorization: `Bearer ${userStore.authToken}`,
-      }
-    });
-    console.log('즐겨찾기 취소 완료', response.data);
-    emit('favoriteRemoved', props.item.aptId);
-  } catch (error) {
-    console.error('즐겨찾기 상태 변경 실패', error);
-    isHeartClicked.value = true;
+// const toggleHeartColor = async () => {
+//   isHeartClicked.value = false;
+//   try {
+//     const response = await axios.post(`/remove/${props.item.aptId}`, {
+//       headers: {
+//         Authorization: `Bearer ${userStore.authToken}`,
+//       }
+//     });
+//     console.log('즐겨찾기 취소 완료', response.data);
+//   } catch (error) {
+//     console.error('즐겨찾기 상태 변경 실패', error);
+//     isHeartClicked.value = true;
+//   }
+// };
+
+
+// 하트 클릭 시, 부모로 이벤트 전달
+const emit = defineEmits({
+  toggleFavorite: (item) => {
+    if (item && item.aptId) return true; // 아이템이 유효한지 확인 (optional)
+    return false; // 유효하지 않으면 false 반환
   }
+});
+const handleHeartClick = () => {
+  // 부모 컴포넌트에서 처리할 수 있도록 이벤트 전달
+  emit("toggleFavorite", props.item);
 };
 </script>
 
@@ -40,7 +52,7 @@ const toggleHeartColor = async () => {
           style="width: 150px; height: 100%; border-radius: 10px;"/>
       <font-awesome-icon :icon="['fas', 'heart']" size="lg" class="heart-icon"
                          :style="{ color: isHeartClicked ? 'red' : 'white' }"
-                         @click="toggleHeartColor" />
+                         @click="handleHeartClick" />
     </div>
     <div class="item-info">
       <div class="dong">{{ props.item.local3 }}</div>

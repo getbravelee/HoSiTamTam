@@ -21,6 +21,28 @@ const goToMap = () => {
 const userStore = useUserStore();
 const favoriteList = ref([]);
 
+
+// 즐겨찾기 취소 함수
+const toggleFavorite = async (item) => {
+  try {
+    // 즐겨찾기 취소 API 호출
+    const response = await axios.delete(`/favorites/remove/${item.aptId}`, {}, {
+      headers: {
+        Authorization: `Bearer ${userStore.authToken}`,
+      },
+    });
+
+    // API 응답 성공 시, 리스트에서 해당 아이템 제거
+    if (response.status === 200) {
+      favoriteList.value = favoriteList.value.filter(favItem => favItem.aptId !== item.aptId);
+      console.log('즐겨찾기 취소 완료');
+    }
+  } catch (error) {
+    console.error('즐겨찾기 취소 실패:', error);
+  }
+};
+
+
 const fetchFavorites = async () => {
   try {
     const response = await axios.get('/favorites', {
@@ -35,12 +57,6 @@ const fetchFavorites = async () => {
     console.error('즐겨찾기 목록 조회 실패:', error);
   }
 };
-
-// 즐겨찾기 항목이 삭제되었을 때 목록을 갱신
-const handleFavoriteRemoved = (aptId) => {
-  favoriteList.value = favoriteList.value.filter(item => item.aptId !== aptId);
-};
-
 
 onMounted(() => {
   fetchFavorites();
@@ -63,7 +79,7 @@ onMounted(() => {
         <label for="tab-2" class="tab">아파트</label>
       </div>
       <div class="favorite-list">
-        <ListItem v-for="(item) in favoriteList" :key="item.aptId" :item="item" @favoriteRemoved="handleFavoriteRemoved"/>
+        <ListItem v-for="(item) in favoriteList" :key="item.aptId" :item="item" @toggleFavorite="toggleFavorite"/>
       </div>
     </div>
   </div>

@@ -1,5 +1,49 @@
 <script setup>
 import SearchBar from "@/components/SearchBar.vue";
+import {onMounted, ref} from "vue";
+import axios from "axios";
+
+
+// 뉴스 데이터 불러오기
+const newsList = ref([]);
+const fetchNews = async () => {
+  try {
+    const response = await axios.get('/news');
+    newsList.value = response.data;
+    console.log(response.data);
+  } catch (error) {
+    console.error('뉴스 데이터를 가져오는 데 실패했습니다:', error);
+  }
+};
+
+const itemsPerPage = 3;
+const displayedNews = ref([]);
+const currentPage = ref(0);
+
+const loadMoreItems = () => {
+  const startIndex = currentPage.value * itemsPerPage;
+  const nextItems = newsList.value.slice(startIndex, startIndex + itemsPerPage);
+  displayedNews.value.push(...nextItems);
+  currentPage.value++;
+};
+
+// 날짜 포맷팅 함수
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('ko-KR');
+};
+
+onMounted(() => {
+  fetchNews();
+  const checkItemsReady = () => {
+    if (newsList.value.length > 0) {
+      loadMoreItems();
+    } else {
+      setTimeout(checkItemsReady, 100);  // 0.1초마다 확인
+    }
+  };
+  checkItemsReady();
+});
 </script>
 
 <template>
@@ -11,9 +55,9 @@ import SearchBar from "@/components/SearchBar.vue";
         <h3 class="section-title">📌 서비스 소개</h3>
         <div class="section-body">
           <ul class="service-list">
-            <li>동해물과 백두산이 마르고 닳도록</li>
-            <li>아리랑아라리요 다 이뤄지라</li>
-            <li>괭갈리는 바람</li>
+            <li>[부동산 최종 관통 프로젝트]</li>
+            <li>아파트의 상세 정보를 확인할 수 있는 프로젝트입니다.</li>
+            <li></li>
             <li>이수철은 수채모로라 천제</li>
             <li>매운 바람 옷을 없다</li>
             <li>명지 영도</li>
@@ -25,20 +69,17 @@ import SearchBar from "@/components/SearchBar.vue";
         <h3 class="section-title">📰 뉴스</h3>
         <div class="section-body">
           <div class="news-list">
-            <div class="news-box">
-              <div class="news-title title">마포 새 아파트 잡겠다고 여섯 식구가 집 없이 15년 버텼다</div>
-              <div class="news-info info">한국경제 | 한 달 전</div>
-            </div>
-            <div class="news-box">
-              <div class="news-title title">자그마치 5000가구 새 아파트 강북 최대 재건축 속도 붙었다 [부동산360]</div>
-              <div class="news-info info">헤럴드경제 | 19일 전</div>
-            </div>
-            <div class="news-box">
-              <div class="news-title title">“서울 집값 오른다는데” 지금 사려면 '이것' 알아야 합니다 [더 머니이스트]</div>
-              <div class="news-info info">한국경제 | 21일 전</div>
+            <!-- 뉴스 리스트 렌더링 -->
+            <div v-for="news in displayedNews" :key="news.id" class="news-box">
+              <a :href="news.url" target="_blank" class="news-title title">
+                {{ news.title }}
+              </a>
+              <div class="news-info info">
+                {{ formatDate(news.newsDate) }} | 추천수 {{ news.recommendation }}
+              </div>
             </div>
           </div>
-          <button class="more-btn">
+          <button v-if="displayedNews.length < newsList.length" class="more-btn" @click="loadMoreItems">
             더보기
             <font-awesome-icon :icon="['fas', 'angle-down']" />
           </button>
@@ -62,18 +103,22 @@ import SearchBar from "@/components/SearchBar.vue";
                 </div>
               </div>
             </RouterLink>
-            <div class="section-body carousel-item">
-              <div class="notice-box">
-                <div class="notice-title title" title>서비스 출시</div>
-                <div class="notice-info info">2024.12.25</div>
+            <RouterLink :to="{ name: 'notice' }" class="no-decoration">
+              <div class="section-body carousel-item active">
+                <div class="notice-box">
+                  <div class="notice-title title" title>개인정보처리방침 개정 안내</div>
+                  <div class="notice-info info">2024.11.01</div>
+                </div>
               </div>
-            </div>
-            <div class="section-body carousel-item">
-              <div class="notice-box">
-                <div class="notice-title title" title>서비스 업데이트 안내</div>
-                <div class="notice-info info">2024.11.27</div>
+            </RouterLink>
+            <RouterLink :to="{ name: 'notice' }" class="no-decoration">
+              <div class="section-body carousel-item active">
+                <div class="notice-box">
+                  <div class="notice-title title" title>개인정보처리방침 개정 안내</div>
+                  <div class="notice-info info">2024.11.01</div>
+                </div>
               </div>
-            </div>
+            </RouterLink>
           </div>
 
         </div>
@@ -93,6 +138,11 @@ import SearchBar from "@/components/SearchBar.vue";
   background-color: #EBF2FC;
   height: calc(100vh - 65px);
   overflow-y: auto;
+  -ms-overflow-style: none;
+}
+
+.body-container::-webkit-scrollbar {
+  display: none;
 }
 
 .section {
@@ -138,6 +188,14 @@ import SearchBar from "@/components/SearchBar.vue";
   height: 74px;
   border-bottom: 1px #d7d7d7 solid;
   margin-bottom: 13px;
+}
+
+.news-title {
+  all: unset;
+}
+
+.news-title:hover {
+  text-decoration: underline;
 }
 
 .title {

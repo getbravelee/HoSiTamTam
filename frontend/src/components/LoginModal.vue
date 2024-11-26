@@ -13,6 +13,7 @@ const username = ref('');
 const id = ref('');
 const signUpId = ref('');
 const password = ref('');
+const signUpPassword = ref('');
 const repeatPassword = ref('');
 const email = ref('');
 const rememberMe = ref(false);
@@ -20,6 +21,7 @@ const errors = ref({
   id: '',
   signUpId: '',
   password: '',
+  signUpPassword: '',
   repeatPassword: '',
   email: '',
   username: ''
@@ -37,17 +39,17 @@ const validateId = () => {
 };
 
 const validatePassword = () => {
-  if (password.value.length < 8 && password.value != '') {
-    errors.value.password = '비밀번호는 7자 이상이어야 합니다.';
+  if (signUpPassword.value.length < 8 && signUpPassword.value != '') {
+    errors.value.signUpPassword = '비밀번호는 7자 이상이어야 합니다.';
     return false;
   } else {
-    errors.value.password = '';
+    errors.value.signUpPassword = '';
     return true;
   }
 };
 
 const validateRepeatPassword = () => {
-  if (password.value !== repeatPassword.value) {
+  if (signUpPassword.value !== repeatPassword.value) {
     errors.value.repeatPassword = '비밀번호가 일치하지 않습니다';
     return false;
   } else {
@@ -78,7 +80,7 @@ const validateUsername = () => {
 };
 
 // 각 필드 감시
-watch([signUpId, password, repeatPassword, email, username], () => {
+watch([signUpId, signUpPassword, repeatPassword, email, username], () => {
   if (tab.value === 'signUp') {
     validateId();
     validatePassword();
@@ -130,9 +132,11 @@ function handleSignIn() {
       userStore.setAuthToken(response.data.data);
       emit('closeModal');
     } else {
+      alert("로그인 실패");
       console.log(response.data.msg);
     }
   }).catch((error) => {
+    alert("로그인 실패");
     console.log(error.message);
   })
 }
@@ -186,7 +190,7 @@ function handleSignUp() {
 
   axios.post('/auth/register', {
     "userLoginId": signUpId.value,
-    "userPassword": password.value,
+    "userPassword": signUpPassword.value,
     "userNickname": username.value,
     "userEmail": email.value,
   }).then((response) => {
@@ -255,9 +259,9 @@ function handleSignUp() {
               <p v-if="isAvailableMsg" class="success-message">{{ isAvailableMsg }}</p>
             </div>
             <div class="group">
-              <label for="pass" class="label">Password</label>
-              <input v-model="password" id="pass" type="password" class="input"/>
-              <p v-if="errors.password" class="error-message">{{ errors.password }}</p>
+              <label for="signUpPassword" class="label">Password</label>
+              <input v-model="signUpPassword" id="signUpPassword" type="password" class="input"/>
+              <p v-if="errors.signUpPassword" class="error-message">{{ errors.signUpPassword }}</p>
             </div>
             <div class="group">
               <label for="pass" class="label">Repeat Password</label>
