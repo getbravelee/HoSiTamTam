@@ -197,7 +197,7 @@ onMounted(() => {
       </div>
 
       <div class="result-list">
-        <ListItem v-for="(item) in aptList" :key="item.aptId" :item="item" @click="goToApartmentDetail(item.aptId, item.aptName, 36.6022672822298, 126.648860632918)"/>
+        <ListItem v-for="(item) in aptList" :key="item.aptId" :item="item" @click="goToApartmentDetail(item.aptId, item.aptName, item.lat, item.lng)"/>
 <!--        <ListItem @click="goToApartmentDetail(1, 36.6022672822298, 126.648860632918)"/>-->
 <!--        <ListItem @click="goToApartmentDetail(2)"/>-->
 <!--        <ListItem @click="goToApartmentDetail(3)"/>-->
