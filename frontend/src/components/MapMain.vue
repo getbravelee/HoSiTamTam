@@ -27,8 +27,9 @@
 </template>
 
 <script setup>
-import {ref, onMounted} from 'vue';
+import {ref, onMounted, watch} from 'vue';
 import {useRegionStore} from "@/stores/Region";
+import {eventBus} from "@/eventBus/eventBus";
 
 // 카카오 지도 관련 변수
 const map = ref(null);
@@ -301,6 +302,38 @@ const removeMarker = () => {
   markers.value.forEach(marker => marker.setMap(null));
   markers.value = [];
 };
+
+const addMarkersToMap = (aptList) => {
+  if (!aptList || aptList.length === 0) return;
+
+  removeMarker();
+
+  aptList.forEach(apt => {
+    const latLng = new window.kakao.maps.LatLng(apt.lat, apt.lng);
+    const imageSrc = require('@/assets/home--32.png');
+    const imageSize = new window.kakao.maps.Size(32, 32);
+    const imgOptions = {offset: new window.kakao.maps.Point(11, 28)};
+
+    const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions);
+    const marker = new window.kakao.maps.Marker({
+      position: latLng,
+      image: markerImage
+    });
+
+    // window.kakao.maps.event.addListener(marker, 'click', () => {
+    //   showApartmentInfo(apt);
+    // });
+
+    marker.setMap(map.value);
+  });
+};
+
+// 아파트 목록 수신 (EventBus)
+watch(() => eventBus.aptList, (newAptList) => {
+  if (newAptList) {
+    addMarkersToMap(newAptList); // 데이터가 갱신되면 마커 추가
+  }
+});
 
 const displayPlaceInfo = (place) => {
   const style = document.createElement('style');
