@@ -1,9 +1,9 @@
 <script setup>
-import {defineProps, ref} from "vue";
+import {defineProps, ref, defineEmits} from "vue";
 // import axios from "axios";
-import {useUserStore} from "@/stores/user";
+// import {useUserStore} from "@/stores/user";
 
-const userStore = useUserStore();
+// const userStore = useUserStore();
 // 부모로부터 전달받은 item
 const props = defineProps({
   item: {
@@ -31,9 +31,15 @@ const isHeartClicked = ref(props.item.isFavorite);
 
 
 // 하트 클릭 시, 부모로 이벤트 전달
+const emit = defineEmits({
+  toggleFavorite: (item) => {
+    if (item && item.aptId) return true; // 아이템이 유효한지 확인 (optional)
+    return false; // 유효하지 않으면 false 반환
+  }
+});
 const handleHeartClick = () => {
   // 부모 컴포넌트에서 처리할 수 있도록 이벤트 전달
-  emit("toggle-favorite", props.item);
+  emit("toggleFavorite", props.item);
 };
 </script>
 

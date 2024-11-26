@@ -79,7 +79,7 @@ onMounted(() => {
         <label for="tab-2" class="tab">아파트</label>
       </div>
       <div class="favorite-list">
-        <ListItem v-for="(item) in favoriteList" :key="item.aptId" :item="item" @toggle-favorite="toggleFavorite"/>
+        <ListItem v-for="(item) in favoriteList" :key="item.aptId" :item="item" @toggleFavorite="toggleFavorite"/>
       </div>
     </div>
   </div>
