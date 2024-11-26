@@ -17,12 +17,12 @@
     </div>
     <!-- 결과 목록 -->
     <div v-if="showResults && results.length" class="search-results" @mousedown="onResultClick">
+      <!--      <ul>-->
+      <!--        <li v-for="(result, index) in results" :key="index" @click="selectSuggestion(result)">{{ result }}</li>-->
+      <!--      </ul>-->
       <ul>
-        <li v-for="(result, index) in results" :key="index" @click="selectSuggestion(result)">{{ result }}</li>
+        <li v-for="(result) in results" :key="result.id" @click="selectSuggestion(result)">{{ result.dongName }}</li>
       </ul>
-<!--      <ul>-->
-<!--        <li v-for="(result) in results" :key="result.id" @click="selectSuggestion(result)">{{ result.loationName }}</li>-->
-<!--      </ul>-->
     </div>
   </div>
 </template>
@@ -30,6 +30,8 @@
 <script>
 import { useRouter } from 'vue-router';
 import {ref} from "vue";
+import axios from "axios";
+// import axios from "axios";
 
 export default {
   props: {
@@ -53,24 +55,27 @@ export default {
     const onSearch = () => {
       results.value = [];
 
-      const allLocations = ["서울", "부산", "대구", "인천", "광주", "대전", "울산"];
-      results.value = allLocations.filter((location) =>
-          location.includes(query.value)
-      );
-      showResults.value = results.value.length > 0;
+      // const allLocations = ["서울", "부산", "대구", "인천", "광주", "대전", "울산"];
+      // results.value = allLocations.filter((location) =>
+      //     location.includes(query.value)
+      // );
+      // showResults.value = results.value.length > 0;
+
+
+      if (query.value.length > 1) {
+        axios.get(`/search/suggestions?keyword=${query.value}`)
+            .then(response => {
+              console.log(response.data);
+              results.value = response.data; // 서버에서 받은 제안 목록
+            })
+            .catch(error => {
+              console.error("Error fetching suggestions:", error);
+            });
+      } else {
+        results.value = [];
+      }
 
       emit('results', results.value);
-      // if (this.query.length > 1) {
-      //   axios.get(`/api/search/suggestions?keyword=${this.query}`)
-      //       .then(response => {
-      //         this.results = response.data; // 서버에서 받은 제안 목록
-      //       })
-      //       .catch(error => {
-      //         console.error("Error fetching suggestions:", error);
-      //       });
-      // } else {
-      //   this.results = [];
-      // }
     };
 
     const onInput = () => {
@@ -119,15 +124,14 @@ export default {
     };
 
     const selectSuggestion = (result) => {
-      query.value = result;
-      // query.value = result.locationName;
-      console.log(result);
-      const data = results.value.map(item => item);
+      // query.value = result;
+      // query.value = result.bcode;
+      // const data = results.value.map(item => item);
       router.push({
         name: 'aptList',
-        params: { region: result },
-        query: { query: result },
-        state: { results: data }
+        params: {region: result.bcode},
+        query: {query: query.value, dongName: result.dongName},
+        // state: { results: data },
       });
 
       results.value = [];
@@ -139,8 +143,8 @@ export default {
       const data = results.value.map(item => item);
       router.push({
         name: 'regionList',
-        query: { query: query.value },  // query는 URL 쿼리로 전달
-        state: { results: data },  // results는 state로 전달
+        query: {query: query.value},  // query는 URL 쿼리로 전달
+        state: {results: data},  // results는 state로 전달
       });
 
       showResults.value = false;
