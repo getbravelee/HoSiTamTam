@@ -13,7 +13,6 @@ const region = route.params.region;
 const query = ref(route.query.query || '');
 const results = ref(history.state.results || '[]');
 const dongName = ref(route.query.dongName || '');
-console.log(dongName);
 const tab = ref('all');
 
 watch(() => route.query.query, (newQuery) => {
@@ -31,13 +30,11 @@ const price = reactive({
     'text_color': '#ffffff'
   },
   'Category 2': {
-    'value': 30,
+    'value': 40,
     'background_color': '#271f7a',
     'text_color': '#ffffff'
   },
 })
-
-
 
 const area = reactive({
   'Category 1': {
@@ -82,7 +79,6 @@ const placesSearchCB = (data, status) => {
   }
 };
 
-
 const goToApartmentDetail = (apartmentId, aptName, lat, lng) => {
   // 카테고리 별 정보 가져오기
   placesStore.resetPlaceData();
@@ -116,22 +112,35 @@ const goToMap = () => {
   router.push({ name: 'map' });
 };
 
-
+// 아파트 리스트
 const aptList = ref([]);
 const fetchAptList = async () => {
   try {
-    const response = await axios.get(`/region/${region}`, {
-      headers: {
-        // "Content-Type": "application/json",
-        // Authorization: `Bearer ${userStore.authToken}`,
-      },
-    });
+    const params = {
+      areaMin: area["Category 1"].value,
+      areaMax: area["Category 2"].value + area["Category 1"].value,
+      priceMin: price["Category 1"].value,
+      priceMax: price["Category 2"].value + price["Category 1"].value,
+    };
+
+    if (tab.value !== 'all') {
+      params.type = tab.value;
+    }
+
+    const response = await axios.get(`/region/${region}`, { params });
     console.log(response.data);
     aptList.value = response.data;
   } catch (error) {
     console.error('아파트 목록 조회 실패:', error);
   }
 };
+
+// 필터링 변경 시 실행
+watch([() => price["Category 1"].value, () => price["Category 2"].value,
+  () => area["Category 1"].value, () => area["Category 2"].value,
+  () => tab.value], () => {
+  fetchAptList();
+});
 
 onMounted(() => {
   fetchAptList();
