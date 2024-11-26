@@ -93,7 +93,7 @@ def makeCSV(fileName, dataList):
 start_time = time.time()
 
 # geohash 설정
-geohash = ['wyd']
+geohash = ['wy7']
 totalGeohash = []
 for i in geohash:
     tmp4Lv = getHigherGeohash(i)
