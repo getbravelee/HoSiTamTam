@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.suleekyuri.hositamtam.region.mapper.RegionMapper">
+
+    <select id="findByDongCode" resultType="com.suleekyuri.hositamtam.region.dto.RegionDto">
+        SELECT
+            id AS aptId,
+            name AS aptName,
+            local1,
+            local2,
+            local3,
+            maxSalesPrice AS maxSalesPrice,
+            총세대수 AS totalHome,
+            가구당주차대수 AS parkingPerHome,
+            image,
+            lat,
+            lng
+        FROM apartment
+        WHERE bcode = #{bcode}
+        <if test="areaMin != null and areaMax != null">
+            AND JSON_UNQUOTE(JSON_EXTRACT(trade_data, '$[0].exclu_use_area')) BETWEEN #{areaMin} AND #{areaMax} <!-- exclu_use_area를 기준으로 필터링 -->
+        </if>
+        <if test="priceMin != null and priceMax != null">
+            AND maxSalesPrice BETWEEN #{priceMin} AND #{priceMax}
+        </if>
+    </select>
+
+</mapper>
